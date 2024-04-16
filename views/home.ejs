@@ -27,7 +27,7 @@
 
 	<!--Add a script by google -->
 	<script src=
-"https://maps.googleapis.com/maps/api/js?key=[KEYHERE]&callback=initMap&libraries=&v=weekly"
+"https://maps.googleapis.com/maps/api/js?key=<%= locals.apikey || 'Invalid or No API Key' %>&callback=initMap&libraries=&v=weekly"
 		async>
 	</script>
 	<script>
