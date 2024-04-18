@@ -1,0 +1,13 @@
+GET http://localhost:3000/reviews
+
+###
+
+POST http://localhost:3000/reviews
+Content-Type: application/json
+
+{
+    "title": "That Place sucked",
+    "location": "24 Kings",
+    "review": "property managments shit, neighbors shit, house over priced",
+    "stars": 6,
+}

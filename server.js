@@ -28,17 +28,17 @@ function readApiKey() {
   }
 
 app.get("/home", (req, res) => {
-  apikey = readApiKey()
+  //apikey = readApiKey()
   console.log("GET HOME PAGE")
-  res.render("home", {apikey: apikey})
+res.render("home"/*, {apikey: apikey}*/)
 })
 
 
 const userRouter = require("./routes/users")
-const postRouter = require("./routes/posts")
+const reviewRouter = require("./routes/reviews")
 
 app.use("/users", userRouter)
-app.use("/posts", postRouter)
+app.use("/reviews", reviewRouter)
 
 function logger(req, res, next) {
     console.log(req.originalUrl)
