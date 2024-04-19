@@ -9,19 +9,19 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    reviewDate: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
     review: {
         type: String,
         required: true
     },
     stars: {
-        type: Number,
+        type: String,
         required: true
-    }
+    },
+    reviewDate: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
 })
 
-module.exports = mongoose.model("Review", reviewSchema)
+module.exports = mongoose.model('Review', reviewSchema)

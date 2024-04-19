@@ -2,12 +2,29 @@ GET http://localhost:3000/reviews
 
 ###
 
+GET http://localhost:3000/reviews/6621ac4bad5f1c39854068ac
+
+###
+
 POST http://localhost:3000/reviews
 Content-Type: application/json
 
 {
     "title": "That Place sucked",
     "location": "24 Kings",
-    "review": "property managments shit, neighbors shit, house over priced",
-    "stars": 6,
+    "review": "property managments shit",
+    "stars": "6"
+}
+
+###
+
+DELETE http://localhost:3000/reviews/6621ac4bad5f1c39854068ac
+
+###
+
+PATCH http://localhost:3000/reviews/6621ac4cad5f1c39854068ae
+Content-Type: application/json
+
+{
+    "title": "That Place sucked balls"
 }
