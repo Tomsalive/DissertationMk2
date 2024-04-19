@@ -29,13 +29,11 @@ router.post("/", async (req, res) => {
     }
 })
 
-router
-.route("/:ReviewID")
-.get(getReview, async (req, res) => {
+router.get("/:ReviewID", getReview, async (req, res) => {   
     console.log("GET REVIEW PAGE")
     res.send(res.review.title)
 })
-.put(getReview, async (req, res) => {
+router.patch("/:ReviewID", getReview, async (req, res) => {
     if (req.body.title != null) {
         res.review.title = req.body.title
       }
@@ -49,14 +47,16 @@ router
         res.review.stars = req.body.stars
       }
     try {
-        const updatedReview = await Review.findByIdAndUpdate(req.params.ReviewID)
+        const updatedReview = await res.review.save()
         res.json(updatedReview)
       } catch (err) {
         res.status(400).json({ message: err.message })
     }
 
 })
-.delete(getReview, async (req, res) => {
+
+
+router.delete("/:ReviewID", getReview, async (req, res) => {
     try {
         await Review.findByIdAndDelete(req.params.ReviewID)
         res.json({ message: "Deleted Review"})
@@ -78,6 +78,7 @@ async function getReview(req, res, next) {
     }
     
     res.review = review
+    console.log(res.review)
     next()
 }
 

@@ -17,6 +17,7 @@ app.use(express.json())
 app.set("view engine", "ejs")
 app.use(logger)
 
+/*
 function readApiKey() {
     try {
       const apiKey = fs.readFileSync("API-KEY.txt", "utf8").trim()
@@ -26,6 +27,7 @@ function readApiKey() {
       return null
     }
   }
+*/
 
 app.get("/home", (req, res) => {
   //apikey = readApiKey()

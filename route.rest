@@ -2,7 +2,7 @@ GET http://localhost:3000/reviews
 
 ###
 
-GET http://localhost:3000/reviews/6621ac4bad5f1c39854068ac
+GET http://localhost:3000/reviews/662295cf091caaae801eeee8
 
 ###
 
@@ -18,11 +18,11 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/reviews/6621ac4bad5f1c39854068ac
+DELETE http://localhost:3000/reviews/662295cf091caaae801eeee8
 
 ###
 
-PATCH http://localhost:3000/reviews/6621ac4cad5f1c39854068ae
+PATCH http://localhost:3000/reviews/662295cf091caaae801eeee8
 Content-Type: application/json
 
 {
