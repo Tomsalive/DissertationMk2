@@ -19,7 +19,8 @@ router.post("/", async (req, res) => {
         //console.log(hashedPassword)
         const user = new User({
             username: req.body.username, 
-            password: hashedPassword
+            password: hashedPassword,
+            email: req.body.email
         })
         try {
             const newUser = await user.save()
@@ -43,9 +44,9 @@ router.delete("/:UserID", async (req, res) => {
 })
 
 router.post("/login", async (req, res) => {
-    const user = await User.findOne({ username: req.body.username })
+    const user = await User.findOne({ email: req.body.email })
     if (user == null) {
-        return res.status(400).json({ message: "Cannot find user"})
+        return res.status(400).json({ message: "Cannot find user with that email"})
     }
     try {
         if (await bcrypt.compare(req.body.password, user.password)) {
@@ -57,6 +58,14 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ message: err.message})
     }
 })
+
+
+/*
+router.get("/login", (req,res) => {
+    console.log("GET HOME PAGE")
+    res.render("login")
+})
+*/
 
 
 /*

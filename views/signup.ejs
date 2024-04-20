@@ -8,10 +8,17 @@
 </head>
 <body>
   <form action="/users" method="POST">
-    <label>First Name
-      <input type="text" name="firstName" value="<%= locals.firstName %>" />
+    <label>username
+      <input type="text" name="username" value="<%= locals.username %>" />
+    </label>
+    <label>email
+      <input type="text" name="email" value="<%= locals.email %>" />
+    </label>
+    <label>password
+      <input type="text" name="password" value="<%= locals.password %>" />
     </label>
     <button type="submit">Submit</button>
   </form>
+  <a href="/login">Log In</a>
 </body>
 </html>

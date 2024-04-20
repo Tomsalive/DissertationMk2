@@ -1,0 +1,29 @@
+GET http://localhost:3000/signup
+
+###
+
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+"username": "Tom", 
+"password": "password",
+"email": "example@email.com"
+
+}
+
+###
+
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+"username": "Tom", 
+"password": "password",
+"email": "example@email.com"
+
+}
+
+###
+
+DELETE http://localhost:3000/signup/6623d3ae308544236752487b

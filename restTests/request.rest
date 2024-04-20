@@ -7,7 +7,8 @@ Content-Type: application/json
 
 {
 "username": "Tom", 
-"password": "password"
+"password": "password",
+"email": "example@email.com"
 
 }
 
@@ -18,10 +19,11 @@ Content-Type: application/json
 
 {
 "username": "Tom", 
-"password": "password"
+"password": "password",
+"email": "example@email.com"
 
 }
 
 ###
 
-DELETE http://localhost:3000/users/6623a7e751641a51981610cc
+DELETE http://localhost:3000/users/6623d3ae308544236752487b
