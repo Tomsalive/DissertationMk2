@@ -1,6 +1,65 @@
 const express = require("express")
 const router = express.Router()
+const User = require("../models/user")
+const bcrypt = require('bcrypt')
 
+router.get("/", async(req, res) => {
+    try {
+        const users = await User.find()
+        res.json(users)
+    } catch (err) {
+        res.status(500).json({ message: err.message})
+    } 
+})
+
+router.post("/", async (req, res) => {
+    try {
+        const salt = await bcrypt.genSalt()
+        const hashedPassword = await bcrypt.hash(req.body.password, salt)
+        //console.log(hashedPassword)
+        const user = new User({
+            username: req.body.username, 
+            password: hashedPassword
+        })
+        try {
+            const newUser = await user.save()
+            res.status(201).json(newUser)
+        } catch (err) {
+            res.status(400).json({ message: err.message})
+        }
+    } catch { 
+        res.status(500).json({ message: err.message})
+    }
+})
+
+router.delete("/:UserID", async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.UserID)
+        res.json({ message: "Deleted User"})
+    } catch (err) {
+        //console.log("here")
+        res.status(500).json({ message: err.message})
+    }
+})
+
+router.post("/login", async (req, res) => {
+    const user = await User.findOne({ username: req.body.username })
+    if (user == null) {
+        return res.status(400).json({ message: "Cannot find user"})
+    }
+    try {
+        if (await bcrypt.compare(req.body.password, user.password)) {
+            res.json({ message: "Success"})
+        } else {
+            res.json({ message: "Not Allowed"})
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message})
+    }
+})
+
+
+/*
 router.get("/", (req, res) => {
     console.log("GET USERS PAGE")
     res.send("GET USERS PAGE")
@@ -29,7 +88,7 @@ router
     res.send(`GET USER PAGE: ${req.params.UserID}`)
     console.log(req.user)
 })
-.put((req, res) => {
+.patch((req, res) => {
     res.send(`UPDATE USER PAGE: ${req.params.UserID}`)
 })
 .delete((req, res) => {
@@ -42,5 +101,9 @@ router.param("UserID", (req, res, next, UserID) => {
     req.user = users[UserID]
     next()
 })
+
+*/
+
+
 
 module.exports = router

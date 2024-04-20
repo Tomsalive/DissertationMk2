@@ -33,6 +33,7 @@ router.get("/:ReviewID", getReview, async (req, res) => {
     console.log("GET REVIEW PAGE")
     res.send(res.review.title)
 })
+
 router.patch("/:ReviewID", getReview, async (req, res) => {
     if (req.body.title != null) {
         res.review.title = req.body.title
