@@ -20,10 +20,10 @@ Content-Type: application/json
 {
 "username": "Tom", 
 "password": "password",
-"email": "example@email.com"
+"email": "example@email.com" 
 
 }
 
 ###
 
-DELETE http://localhost:3000/users/6623d3ae308544236752487b
+DELETE http://localhost:3000/users/66244df361d4f6da5f02812e

@@ -2,26 +2,42 @@ const express = require("express")
 const router = express.Router()
 const User = require("../models/user")
 const bcrypt = require('bcrypt')
+const passport = require("passport")
 
-router.get("/", (req,res) => {
+router.get("/", checkNotAuthenticated, (req,res) => {
     console.log("GET LOG IN PAGE")
     res.render("login")
 })
 
-router.post("/", async (req, res) => {
-    const user = await User.findOne({ email: req.body.email })
-    if (user == null) {
-        return res.status(400).json({ message: "Cannot find user with that email"})
+router.post("/", checkNotAuthenticated, passport.authenticate("local", {
+    successRedirect: "/home",
+    failureRedirect: "/signup",
+    failureFlash: true
+}))
+
+const initializePassport = require('../passport-config')
+
+initializePassport(
+  passport, 
+  email => User.find(email),
+  id => User.find(id),
+)
+
+
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next()
     }
-    try {
-        if (await bcrypt.compare(req.body.password, user.password)) {
-            res.json({ message: "Success"})
-        } else {
-            res.json({ message: "Not Allowed"})
-        }
-    } catch (err) {
-        res.status(500).json({ message: err.message})
+  
+    res.redirect('/login')
+}
+  
+function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return res.redirect('/home')
     }
-})
+    next()
+}
+
   
 module.exports = router

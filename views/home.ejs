@@ -21,6 +21,9 @@
 	<h2>
 		Welcome <%= username %>
 	</h2>
+	<form action="/logout?_method=DELETE" method="POST">	
+		<button type="submit"> Log Out</button>
+	</form>
 
 	<!--The div element for the map -->
 	<div id="map"></div>
@@ -51,6 +54,8 @@
             });
         }
     </script>
+
+
 
 </body>
 

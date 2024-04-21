@@ -3,12 +3,12 @@ const router = express.Router()
 const User = require("../models/user")
 const bcrypt = require('bcrypt')
 
-router.get("/", (req,res) => {
+router.get("/", checkNotAuthenticated, (req,res) => {
     console.log("GET SIGN UP PAGE")
     res.render("signup")
 })
 
-router.post("/", async (req, res) => {
+router.post("/", checkNotAuthenticated, async (req, res) => {
     try {
         const salt = await bcrypt.genSalt()
         const hashedPassword = await bcrypt.hash(req.body.password, salt)
@@ -20,15 +20,32 @@ router.post("/", async (req, res) => {
         })
         try {
             const newUser = await user.save()
-            res.status(201).json(newUser)
+            //res.status(201).json(newUser)
+            res.redirect('./login')
         } catch (err) {
-            res.status(400).json({ message: err.message})
+            //res.status(400).json({ message: err.message})
+            res.redirect('/signup')
         }
-    } catch { 
-        res.status(500).json({ message: err.message})
+    } catch (err) { 
+        //res.status(500).json({ message: err.message})
+        res.redirect('/signup')
     }
 })
   
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next()
+    }
+  
+    res.redirect('/login')
+}
+  
+function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return res.redirect('./home')
+    }
+    next()
+}
 
   
 module.exports = router
