@@ -6,7 +6,7 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-ARG NODE_VERSION=20.12.2
+ARG NODE_VERSION=20.11.1
 
 FROM node:${NODE_VERSION}-alpine
 
@@ -35,4 +35,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the application.
-CMD node .
+CMD npm start

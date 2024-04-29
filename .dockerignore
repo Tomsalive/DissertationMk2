@@ -6,7 +6,7 @@
 
 **/.classpath
 **/.dockerignore
-**/.env
+#**/.env
 **/.git
 **/.gitignore
 **/.project
@@ -32,6 +32,3 @@
 **/dist
 LICENSE
 README.md
-
-#Api key ignore
-API-KEY.txt
