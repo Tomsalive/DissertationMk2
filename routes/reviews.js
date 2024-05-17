@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
     //res.send("GET USERS PAGE")
 })
   
-router.post("/", async (req, res) => {
+router.post("/new", async (req, res) => {
     const review = new Review({
         title: req.body.title,
         location: req.body.location,
