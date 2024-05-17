@@ -5,11 +5,15 @@
   </head>
 
   <body>
-    <button onclick="login()">Login</button>
+    <button onclick="navigateToLoginPage()">Login</button>
+    <button onclick="navigateToSignupPage()">Sign Up</button>
 
     <script>
-      function login() {
+      function navigateToLoginPage() {
         window.location.href = 'login'; 
+      }
+      function navigateToSignupPage() {
+        window.location.href = 'signup';
       }
     </script>
   </body>
