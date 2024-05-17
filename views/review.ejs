@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <style type="text/css">
+		/* Header and Navigation Styles */
+		.full-width-header {
+		background-color: #333;
+		color: #fff;
+		padding: 10px 0;
+		width: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 10;
+		}
+
+		nav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		max-width: 1200px;
+		margin: 0 auto;
+		}
+
+		.logo {
+		flex-grow: 1;
+		}
+
+		.logo a {
+		font-size: 24px;
+		font-weight: bold;
+		color: #fff;
+		text-decoration: none;
+		}
+
+		nav ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		}
+
+		nav ul li {
+		margin-left: 20px;
+		}
+
+		.nav-btn {
+		color: #fff;
+		text-decoration: none;
+		font-size: 16px;
+		padding: 10px 15px;
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		}
+
+		.nav-btn:hover {
+		background-color: #555;
+		}
+		
+		/*Search Bar style*/
+
+		.search-container {
+		display: flex;
+		justify-content: center;
+		margin-top: 80px;
+		}
+
+		.search-input {
+		width: 300px;
+		padding: 10px;
+		font-size: 16px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		}
+
+		/* Map Styles */
+		#map {
+		height: 450px;
+		width: 1000px;
+		margin-top: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+		}
+	</style>
+  </head>
+
+  <body>
+    <header class="full-width-header">
+      <nav>
+        <div class="logo">
+          <a href="/home">WS Housing Reviewer</a>
+        </div>
+        <ul>
+            <li><button type="button" class="nav-btn" onclick="window.location.href=''">New Review</button></li>
+            <li>
+                <form action="/logout?_method=DELETE" method="POST">
+                  <button type="submit" class="nav-btn">Log Out</button>
+                </form>
+            </li>
+        </ul>
+      </nav>
+    </header>
+
+    
+  </body>
+</html>

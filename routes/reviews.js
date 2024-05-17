@@ -2,10 +2,11 @@ const express = require("express")
 const router = express.Router()
 const Review = require("../models/review")
 
-router.get("/", async (req, res) => {
+router.get("/", checkAuthenticated, async (req, res) => {
     try {
-        const reviews = await Review.find()
-        res.json(reviews)
+        //const reviews = await Review.find()
+        //res.json(reviews)
+        res.render("review")
     } catch (err) {
         res.status(500).json({ message: err.message})
     } 
@@ -81,6 +82,14 @@ async function getReview(req, res, next) {
     res.review = review
     console.log(res.review)
     next()
+}
+
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next()
+    }
+  
+    res.redirect('/login')
 }
 
 module.exports = router
