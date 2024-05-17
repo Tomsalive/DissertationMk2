@@ -3,27 +3,112 @@
 
 <head>
 	<style type="text/css">
+		/* Header and Navigation Styles */
+		.full-width-header {
+		background-color: #333;
+		color: #fff;
+		padding: 10px 0;
+		width: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 10;
+		}
 
-		/* Set the size of the div element 
-		that contains the map */
-		#map {
-			height: 400px;
-			width: 400px;
+		nav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		max-width: 1200px;
+		margin: 0 auto;
+		}
+
+		.logo {
+		flex-grow: 1;
+		}
+
+		.logo a {
+		font-size: 24px;
+		font-weight: bold;
+		color: #fff;
+		text-decoration: none;
+		}
+
+		nav ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		}
+
+		nav ul li {
+		margin-left: 20px;
+		}
+
+		.nav-btn {
+		color: #fff;
+		text-decoration: none;
+		font-size: 16px;
+		padding: 10px 15px;
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		}
+
+		.nav-btn:hover {
+		background-color: #555;
 		}
 		
-		h2 {
-			color: #308d46;
+		/*Search Bar style*/
+
+		.search-container {
+		display: flex;
+		justify-content: center;
+		margin-top: 80px;
+		}
+
+		.search-input {
+		width: 300px;
+		padding: 10px;
+		font-size: 16px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		}
+
+		/* Map Styles */
+		#map {
+		height: 400px;
+		width: 400px;
+		margin-top: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
 		}
 	</style>
 </head>
 
 <body>
-	<h2>
-		Welcome <%= username %>
-	</h2>
-	<form action="/logout?_method=DELETE" method="POST">	
-		<button type="submit"> Log Out</button>
-	</form>
+	<header class="full-width-header">
+		<nav>
+		  <div class="logo">
+			<a href="">Your Website</a>
+		  </div>
+		  <ul>
+			<li><button type="button" class="nav-btn">About</button></li>
+			<li><button type="button" class="nav-btn">Services</button></li>
+			<li>
+			  <form action="/logout?_method=DELETE" method="POST">
+				<button type="submit" class="nav-btn">Log Out</button>
+			  </form>
+			</li>
+		  </ul>
+		</nav>
+	</header>
+
+	<div class="search-container">
+		<input type="text" placeholder="Search..." class="search-input" id="search-input">
+		<button type="button" class="search-btn" onclick="searchAddress()">Search</button>
+	</div>
 
 	<!--The div element for the map -->
 	<div id="map"></div>
@@ -36,23 +121,64 @@
 	<script>
  
         // Initialize and add the map
-        function initMap() {
- 
-            // The location of Geeksforgeeks office
-            const gfg_office = {
-                lat: 51.063696,
-                lng: -1.319273
-            };
- 
-            // Create the map, centered at gfg_office
-            const map = new google.maps.Map(
-                    document.getElementById("map"), {
- 
-                // Set the zoom of the map
-                zoom: 13,
-                center: gfg_office,
-            });
-        }
+		let map;
+
+		function initMap() {
+		// The location of Geeksforgeeks office
+		const winchester_city = {
+			lat: 51.063696,
+			lng: -1.319273
+		};
+
+		// Create the map, centered at gfg_office
+		map = new google.maps.Map(document.getElementById("map"), {
+			zoom: 13,
+			center: winchester_city,
+		});
+		}
+
+		// Function to search for an address and display it on the map
+		function searchAddress() {
+			const searchInput = document.getElementById("search-input");
+			const address = searchInput.value;
+
+			// Create a new geocoder
+			const geocoder = new google.maps.Geocoder();
+
+			// Geocode the address
+			geocoder.geocode({ address: address }, (results, status) => {
+				if (status === "OK") {
+				// Get the coordinates of the address
+				const location = results[0].geometry.location;
+
+				// Clear the previous marker
+				clearMarkers();
+
+				// Update the map center and add a new marker
+				map.setCenter(location);
+				map.setZoom(13); // Set the zoom level to 13
+				addMarker(location);
+				} else {
+				alert("Geocode was not successful for the following reason: " + status);
+				}
+			});
+		}
+
+		// Function to clear the previous marker
+		function clearMarkers() {
+			// Remove any existing markers from the map
+			if (marker) {
+				marker.setMap(null);
+			}
+		}
+
+		// Function to add a new marker to the map
+		function addMarker(location) {
+			marker = new google.maps.Marker({
+				position: location,
+				map: map,
+			});
+		}
     </script>
 
 
