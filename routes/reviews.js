@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const Review = require("../models/review")
 
-router.get("/", async (req, res) => {
+router.get("/", checkAuthenticated, async (req, res) => {
     try {
         const reviews = await Review.find()
         //res.json(reviews)
