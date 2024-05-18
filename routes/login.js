@@ -9,11 +9,19 @@ router.get("/", checkNotAuthenticated, (req,res) => {
     res.render("login", { locals: { email: '' } })
 })
 
-router.post("/", checkNotAuthenticated, passport.authenticate("local", {
-    successRedirect: "/home",
-    failureRedirect: "/signup",
-    failureFlash: true
-}))
+router.post("/", checkNotAuthenticated, (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) { return next(err); }
+    if (!user) {
+      // Login failed, pass the error message back to the login page
+      return res.render("login", { email: req.body.email, error: info.message });
+    }
+    req.logIn(user, (err) => {
+      if (err) { return next(err); }
+      return res.redirect("/home");
+    });
+  })(req, res, next);
+});
 
 const initializePassport = require('../passport-config')
 
