@@ -13,7 +13,11 @@ router.get("/", checkAuthenticated, async (req, res) => {
     //console.log("GET USERS PAGE")
     //res.send("GET USERS PAGE")
 })
-  
+
+router.get("/new", checkAuthenticated, (req, res) => {
+    res.render("newReview")
+})
+
 router.post("/new", async (req, res) => {
     const review = new Review({
         title: req.body.title,
