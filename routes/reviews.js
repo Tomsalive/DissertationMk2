@@ -2,11 +2,11 @@ const express = require("express")
 const router = express.Router()
 const Review = require("../models/review")
 
-router.get("/", checkAuthenticated, async (req, res) => {
+router.get("/", async (req, res) => {
     try {
-        //const reviews = await Review.find()
+        const reviews = await Review.find()
         //res.json(reviews)
-        res.render("review")
+        res.render("review", reviews=reviews)
     } catch (err) {
         res.status(500).json({ message: err.message})
     } 

@@ -87,6 +87,24 @@
 		margin-right: auto;
 		display: block;
 		}
+
+        .review-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 20px;
+        padding: 20px;
+        }
+
+        .review-item {
+        background-color: #f1f1f1;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-item h3 {
+        margin-top: 0;
+        }
 	</style>
   </head>
 
@@ -107,6 +125,17 @@
       </nav>
     </header>
 
+    <div class="review-list">
+        <% reviews.forEach(review => { %>
+          <div class="review-item">
+            <h3><%= review.title %></h3>
+            <p><%= review.review %></p>
+            <p>Rating: <%= review.rating %></p>
+            <p>Reviewer: <%= review.userID %></p>
+            <p>Date: <%= review.reviewDate.toLocaleDateString() %></p>
+          </div>
+        <% }) %>
+      </div>
     
   </body>
 </html>
