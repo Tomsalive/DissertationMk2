@@ -6,7 +6,7 @@ const passport = require("passport")
 
 router.get("/", checkNotAuthenticated, (req,res) => {
     console.log("GET LOG IN PAGE")
-    res.render("login")
+    res.render("login", { locals: { email: '' } })
 })
 
 router.post("/", checkNotAuthenticated, passport.authenticate("local", {

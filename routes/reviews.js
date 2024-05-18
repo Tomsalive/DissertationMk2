@@ -6,7 +6,7 @@ router.get("/", checkAuthenticated, async (req, res) => {
     try {
         const reviews = await Review.find()
         //res.json(reviews)
-        res.render("review", reviews=reviews)
+        res.render("review", { reviews: reviews })
     } catch (err) {
         res.status(500).json({ message: err.message})
     } 
@@ -30,10 +30,17 @@ router.post("/new", async (req, res) => {
     }
 })
 
-router.get("/:ReviewID", getReview, async (req, res) => {   
-    console.log("GET REVIEW PAGE")
-    res.send(res.review.title)
-})
+router.get("/:id", checkAuthenticated, async (req, res) => {
+    try {
+      console.log("Requested review ID:", req.params.id);
+      const review = await Review.findById(req.params.id);
+      console.log("Found review:", review);
+      res.render("singleReview", { review: review });
+    } catch (err) {
+      console.error("Error fetching review:", err);
+      res.status(500).json({ message: err.message });
+    }
+  });
 
 router.patch("/:ReviewID", getReview, async (req, res) => {
     if (req.body.title != null) {

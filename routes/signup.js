@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt')
 
 router.get("/", checkNotAuthenticated, (req,res) => {
     console.log("GET SIGN UP PAGE")
-    res.render("signup")
+    res.render("signup", { locals: { email: '' } })
 })
 
 router.post("/", checkNotAuthenticated, async (req, res) => {
@@ -14,10 +14,10 @@ router.post("/", checkNotAuthenticated, async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, salt)
         //console.log(hashedPassword)
         const user = new User({
-            username: req.body.username, 
+            username: req.body.username,
             password: hashedPassword,
-            email: req.body.email
-        })
+            email: req.body.email.toLowerCase(),
+          });
         try {
             const newUser = await user.save()
             //res.status(201).json(newUser)

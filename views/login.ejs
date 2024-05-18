@@ -101,7 +101,7 @@
   <header class="full-width-header">
 		<nav>
 		  <div class="logo">
-			<a href="">WS Housing Reviewer</a>
+			<a href="/">WS Housing Reviewer</a>
 		  </div>
 		  <ul>
 			<%# <li><button type="button" class="nav-btn">About</button></li> %>
@@ -111,9 +111,9 @@
 	</header>
 
   <form action="/login" method="POST">
-    <label>Email
-      <input type="text" name="email" value="<%= locals.email %>" />
-    </label>
+    <label>email
+		<input type="text" name="email" value="<%= locals.email.toLowerCase() %>" />
+	</label>
     <label>Password
       <input type="text" name="password" value="<%= locals.password %>" />
     </label>

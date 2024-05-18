@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up Page</title>
+
   <style type="text/css">
 		/* Header and Navigation Styles */
 		.full-width-header {
@@ -101,7 +102,7 @@
   <header class="full-width-header">
 		<nav>
 		  <div class="logo">
-			<a href="">WS Housing Reviewer</a>
+			<a href="/">WS Housing Reviewer</a>
 		  </div>
 		  <ul>
 			<%# <li><button type="button" class="nav-btn">About</button></li> %>
@@ -114,8 +115,8 @@
       <input type="text" name="username" value="<%= locals.username %>" />
     </label>
     <label>email
-      <input type="text" name="email" value="<%= locals.email %>" />
-    </label>
+		<input type="text" name="email" value="<%= locals.email.toLowerCase() %>" />
+	</label>
     <label>password
       <input type="text" name="password" value="<%= locals.password %>" />
     </label>

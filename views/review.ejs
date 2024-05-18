@@ -89,22 +89,38 @@
 		}
 
         .review-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        grid-gap: 20px;
-        padding: 20px;
-        }
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		grid-gap: 20px;
+		padding: 20px;
+		}
 
-        .review-item {
-        background-color: #f1f1f1;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+		.review-item {
+		background-color: #f1f1f1;
+		padding: 20px;
+		border-radius: 5px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		display: flex;
+		align-items: center;
+		}
 
-        .review-item h3 {
-        margin-top: 0;
-        }
+		.review-item .review-content {
+		flex-grow: 1;
+		}
+
+		.review-item .review-button {
+		margin-right: 20px;
+		background-color: #4CAF50;
+		color: white;
+		border: none;
+		padding: 10px 20px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		border-radius: 4px;
+		cursor: pointer;
+		}
 	</style>
   </head>
 
@@ -125,17 +141,24 @@
       </nav>
     </header>
 
-    <div class="review-list">
-        <% reviews.forEach(review => { %>
-          <div class="review-item">
-            <h3><%= review.title %></h3>
-            <p><%= review.review %></p>
-            <p>Rating: <%= review.rating %></p>
-            <p>Reviewer: <%= review.userID %></p>
-            <p>Date: <%= review.reviewDate.toLocaleDateString() %></p>
-          </div>
-        <% }) %>
-      </div>
+	<h1>Reviews</h1>
+	<% if (reviews.length > 0) { %>
+	  <div class="review-list">
+		<% reviews.forEach(review => { %>
+		  <div class="review-item">
+			<a href="/reviews/<%= review._id %>" class="review-button">View</a>
+			<div class="review-content">
+			  <h2><%= review.title %></h2>
+			  <p><%= review.location %></p>
+			  <p><%= review.review %></p>
+			  <p>Rating: <%= review.stars %></p>
+			</div>
+		  </div>
+		<% }) %>
+	  </div>
+	<% } else { %>
+	  <p>No reviews found.</p>
+	<% } %>
     
   </body>
 </html>
