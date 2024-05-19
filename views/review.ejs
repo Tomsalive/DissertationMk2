@@ -121,6 +121,23 @@
 		border-radius: 4px;
 		cursor: pointer;
 		}
+
+		/*stars*/
+		.star-rating {
+		display: flex;
+		align-items: center;
+		color: #ccc;
+		font-size: 20px;
+		}
+
+		.star-rating .star {
+		margin-right: 5px;
+		}
+
+		.star-rating .star.active {
+		color: #ffd700;
+		}
+
 	</style>
   </head>
 
@@ -150,9 +167,17 @@
 			<a href="/reviews/<%= review._id %>" class="review-button">View</a>
 			<div class="review-content">
 			  <h2><%= review.title %></h2>
-			  <p><%= review.location %></p>
-			  <p><%= review.review %></p>
-			  <p>Rating: <%= review.stars %></p>
+			  <p><%= review.address %></p>
+			  <div class="star-rating">
+				<% const numStars = parseInt(review.stars, 10); %>
+				<% for (let i = 0; i < numStars; i++) { %>
+				<span class="star active">&#9733;</span>
+				<% } %>
+				<% for (let i = numStars; i < 5; i++) { %>
+				<span class="star">&#9733;</span>
+				<% } %>
+				<span>(<%= review.stars %>)
+			  </div>
 			</div>
 		  </div>
 		<% }) %>

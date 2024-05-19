@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>New Review</title>
     <style type="text/css">
         /* Header and Navigation Styles */
         .site-header {
@@ -130,17 +130,17 @@
             background-color: #0056b3;
         }
 
-        .review-rating {
+        .review-stars {
             display: flex;
             flex-direction: row-reverse;
             justify-content: center;
         }
 
-        .review-rating > input {
+        .review-stars > input {
             display: none;
         }
 
-        .review-rating > label {
+        .review-stars > label {
             position: relative;
             width: 1em;
             font-size: 2rem;
@@ -148,15 +148,15 @@
             cursor: pointer;
         }
 
-        .review-rating > label::before {
+        .review-stars > label::before {
             content: "\2605";
             position: absolute;
             opacity: 0;
         }
 
-        .review-rating > label:hover:before,
-        .review-rating > label:hover ~ label:before,
-        .review-rating > input:checked ~ label:before {
+        .review-stars > label:hover:before,
+        .review-stars > label:hover ~ label:before,
+        .review-stars > input:checked ~ label:before {
             opacity: 1;
             color: #fbbc04;
         }
@@ -186,90 +186,145 @@
         </div>
         <div class="col-6">
             <div class="review-form-container">
-                <form>
+                <form id="review-form" action="/reviews/new" method="POST">
                     <div class="review-form-group">
-                        <label for="search-input" class="review-form-label">Address</label>
-                        <div style="display: flex; align-items: center;">
-                            <input type="text" id="search-input" class="review-form-control" placeholder="Search for a location">
-                            <button type="submit" id="search-button" class="review-form-submit-btn" style="margin-left: 10px;">Search</button>
-                        </div>
+                      <label for="search-input" class="review-form-label">Address</label>
+                      <div style="display: flex; align-items: center;">
+                        <input type="text" id="search-input" class="review-form-control" placeholder="Search for a location" onkeydown="handleKeydown(event)">
+                        <button type="button" id="search-button" class="review-form-submit-btn" style="margin-left: 10px;" onclick="searchAddress()">Search</button>
+                      </div>
                     </div>
                     <div class="review-form-group">
-                        <label for="title" class="review-form-label">Review Title</label>
-                        <input type="text" class="review-form-control" id="title" placeholder="Enter a title for your review">
+                      <label for="title" class="review-form-label">Review Title</label>
+                      <input type="text" class="review-form-control" id="title" placeholder="Enter a title for your review">
                     </div>
                     <div class="review-form-group">
-                        <label for="rating" class="review-form-label">Rating</label>
-                        <div class="review-rating">
-                            <input type="radio" id="review-star5" name="rating" value="5" />
-                            <label for="review-star5" title="Awesome">&#9733;</label>
-                            <input type="radio" id="review-star4" name="rating" value="4" />
-                            <label for="review-star4" title="Good">&#9733;</label>
-                            <input type="radio" id="review-star3" name="rating" value="3" />
-                            <label for="review-star3" title="Average">&#9733;</label>
-                            <input type="radio" id="review-star2" name="rating" value="2" />
-                            <label for="review-star2" title="Poor">&#9733;</label>
-                            <input type="radio" id="review-star1" name="rating" value="1" />
-                            <label for="review-star1" title="Terrible">&#9733;</label>
-                        </div>
+                      <label for="stars" class="review-form-label">Stars</label>
+                      <div class="review-stars">
+                        <input type="radio" id="stars5" name="stars" value="5">
+                        <label for="stars5">&#9733</label>
+                        <input type="radio" id="stars4" name="stars" value="4">
+                        <label for="stars4">&#9733</label>
+                        <input type="radio" id="stars3" name="stars" value="3">
+                        <label for="stars3">&#9733</label>
+                        <input type="radio" id="stars2" name="stars" value="2">
+                        <label for="stars2">&#9733</label>
+                        <input type="radio" id="stars1" name="stars" value="1">
+                        <label for="stars1">&#9733</label>
+                      </div>
+                    </div>
+                    <div>
+                        <input type="hidden" id="coordinate" name="coordinate" value="">
+                        <input type="hidden" id="userID" name="userID" value="<%= userID %>">
                     </div>
                     <div class="review-form-group">
-                        <label for="review-body" class="review-form-label">Review Body</label>
-                        <textarea class="review-form-control" id="review-body" rows="3" placeholder="Enter your review"></textarea>
+                      <label for="review-body" class="review-form-label">Review Body</label>
+                      <textarea class="review-form-control" id="review-body" rows="3" placeholder="Enter your review"></textarea>
                     </div>
                     <button type="submit" class="review-form-submit-btn">Submit Review</button>
-                </form>
+                  </form>                  
             </div>
         </div>
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=<%= process.env.API_KEY || 'Invalid or No API Key' %>&callback=initMap&libraries=&v=weekly" async></script>
     <script>
-        let map;
+ 
+		let map;
+		let marker;
 
-        function initMap() {
-            const winchester_city = {
-                lat: 51.063696,
-                lng: -1.319273
-            };
+		function initMap() {
+		const winchester_city = {
+			lat: 51.063696,
+			lng: -1.319273
+		};
 
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 13,
-                center: winchester_city
-            });
+		map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 13,
+			center: winchester_city
+		});
+		}
 
-            const searchForm = document.getElementById('search-form');
-            searchForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const searchText = document.getElementById('search-input').value;
-                performSearch(searchText);
-            });
+        function searchAddress() {
+        const searchInput = document.getElementById("search-input");
+        let address = searchInput.value.trim();
+
+        const geocoder = new google.maps.Geocoder();
+
+        geocoder.geocode({ address: address }, (results, status) => {
+            if (status === "OK") {
+                const location = results[0].geometry.location;
+                const latitude = location.lat();
+                const longitude = location.lng();
+                const coordinateInput = document.getElementById("coordinate");
+                coordinateInput.value = `${latitude},${longitude}`;
+
+                clearMarkers();
+
+                map.setCenter(location);
+                map.setZoom(18);
+                addMarker(location);
+            } else {
+                alert("Geocode was not successful for the following reason: " + status);
+            }
+        });
+    }
+
+        function handleKeydown(event) {
+            if (event.key === 'Enter') {
+                searchAddress();
+            }
         }
 
-        function performSearch(searchText) {
-            const searchBox = new google.maps.places.SearchBox(document.getElementById('search-input'));
 
-            searchBox.addListener('places_changed', function() {
-                const places = searchBox.getPlaces();
-                if (places.length === 0) {
-                    return;
-                }
+		function clearMarkers() {
+		if (marker) {
+			marker.setMap(null);
+		}
+		}
 
-                const bounds = new google.maps.LatLngBounds();
-                places.forEach(function(place) {
-                    if (!place.geometry) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-                    if (place.geometry.viewport) {
-                        bounds.union(place.geometry.viewport);
-                    } else {
-                        bounds.extend(place.geometry.location);
-                    }
+		function addMarker(location) {
+		marker = new google.maps.Marker({
+			position: location,
+			map: map,
+		});
+		}
+
+    </script>
+    <script>
+        const reviewForm = document.getElementById('review-form');
+
+        reviewForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const stars = document.querySelector('input[name="stars"]:checked').value;
+            const reviewBody = document.getElementById('review-body').value;
+            const address = document.getElementById('search-input').value;
+            const coordinate = document.getElementById('coordinate').value;
+            const userID = document.getElementById('userID').value;
+
+            try {
+                const response = await fetch('/reviews/new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userID, title, address, coordinate, reviewBody, stars }),
                 });
-                map.fitBounds(bounds);
-            });
-        }
+
+                if (response.ok) {
+                alert('Review submitted successfully!');
+                reviewForm.reset();
+                } else {
+                const errorData = await response.json();
+                alert(`Error submitting the review: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error('Error submitting the review:', error);
+                alert('An error occurred while submitting the review. Please try again later.');
+            }
+        });
     </script>
 </body>
 </html>

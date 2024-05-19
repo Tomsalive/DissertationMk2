@@ -6,14 +6,30 @@ GET http://localhost:3000/reviews/662295cf091caaae801eeee8
 
 ###
 
-POST http://localhost:3000/reviews
+POST http://localhost:3000/reviews/new
 Content-Type: application/json
 
 {
+    "userID":"66244e469e5c10e0d34cb9e3",
     "title": "That Place sucked",
-    "location": "24 Kings",
-    "review": "property managments shit",
-    "stars": "6"
+    "address": "24 Kings Avenue",
+    "coordinate": "51.0527598,-1.3274846",
+    "reviewBody": "property managments bad",
+    "stars": "2"
+}
+
+###
+
+POST http://localhost:3000/reviews/new
+Content-Type: application/json
+
+{
+    "userID":"66244e469e5c10e0d34cb9e3",
+    "title": "Not bad",
+    "address": "71 Stanmore Lane, Winchester",
+    "coordinate": "51.052541,-1.3324821",
+    "reviewBody": "nice view",
+    "stars": "4"
 }
 
 ###

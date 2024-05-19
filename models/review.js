@@ -9,11 +9,15 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    location: {
+    address: {
         type: String,
         required: true
     },
-    review: {
+    coordinate: {
+        type: String,
+        required: true
+    },
+    reviewBody: {
         type: String,
         required: true
     },

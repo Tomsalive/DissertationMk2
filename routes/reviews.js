@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const Review = require("../models/review")
+const User = require("../models/user")
 
 router.get("/", checkAuthenticated, async (req, res) => {
     try {
@@ -14,25 +15,33 @@ router.get("/", checkAuthenticated, async (req, res) => {
     //res.send("GET USERS PAGE")
 })
 
-router.get("/new", checkAuthenticated, (req, res) => {
-    res.render("newReview")
-})
-
-router.post("/new", async (req, res) => {
-    const review = new Review({
-        title: req.body.title,
-        location: req.body.location,
-        review: req.body.review,
-        stars: req.body.stars,
-    })
+// reviews.js
+router.get('/new', checkAuthenticated, async (req, res) => {
     try {
-        console.log("POST REVIEW")
-        const newReview = await review.save()
-        res.status(201).json(newReview)
+      const user = await User.findById(req.user._id);
+      res.render('newReview', { userID: user._id });
     } catch (err) {
-        res.status(400).json({ message: err.message})
+      res.status(500).json({ message: err.message });
     }
-})
+  });
+  
+  router.post('/new', checkAuthenticated, async (req, res) => {
+    const review = new Review({
+      userID: req.body.userID,
+      title: req.body.title,
+      address: req.body.address,
+      coordinate: req.body.coordinate,
+      reviewBody: req.body.reviewBody,
+      stars: req.body.stars,
+    });
+  
+    try {
+      const newReview = await review.save();
+      res.status(201).json(newReview);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  });
 
 router.get("/:id", checkAuthenticated, async (req, res) => {
     try {
@@ -50,8 +59,8 @@ router.patch("/:ReviewID", getReview, async (req, res) => {
     if (req.body.title != null) {
         res.review.title = req.body.title
       }
-    if (req.body.location != null) {
-        res.review.location = req.body.location
+    if (req.body.address != null) {
+        res.review.address = req.body.address
       }
     if (req.body.review != null) {
         res.review.review = req.body.review

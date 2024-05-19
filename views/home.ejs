@@ -140,17 +140,12 @@
 
 		function searchAddress() {
 		const searchInput = document.getElementById("search-input");
-		let address = searchInput.value;
-
-		// Check if the address contains a city or town name
-		if (!address.includes(',')) {
-			address += ', Hampshire, UK';
-		}
+		let address = searchInput.value.trim();
 
 		const geocoder = new google.maps.Geocoder();
 
-		geocoder.geocode({ address: address, componentRestrictions: { country: 'GB' } }, (results, status) => {
-			if (status === "OK") {
+		geocoder.geocode({ address: address }, (results, status) => {
+		if (status === "OK") {
 			const location = results[0].geometry.location;
 
 			clearMarkers();
@@ -158,11 +153,12 @@
 			map.setCenter(location);
 			map.setZoom(13);
 			addMarker(location);
-			} else {
+		} else {
 			alert("Geocode was not successful for the following reason: " + status);
-			}
-		});
 		}
+		});
+	}
+
 
 		function handleKeydown(event) {
 		if (event.key === 'Enter') {
