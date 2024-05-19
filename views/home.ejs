@@ -109,7 +109,7 @@
 	</header>
 
 	<div class="search-container">
-		<input type="text" placeholder="Search..." class="search-input" id="search-input">
+		<input type="text" placeholder="Search..." class="search-input" id="search-input" onkeydown="handleKeydown(event)">
 		<button type="button" class="search-btn" onclick="searchAddress()">Search</button>
 	</div>
 
@@ -123,66 +123,66 @@
 	</script>
 	<script>
  
-        // Initialize and add the map
 		let map;
+		let marker;
 
 		function initMap() {
-		// The location of Geeksforgeeks office
 		const winchester_city = {
 			lat: 51.063696,
 			lng: -1.319273
 		};
 
-		// Create the map, centered at gfg_office
-		map = new google.maps.Map(document.getElementById("map"), {
+		map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 13,
-			center: winchester_city,
-			mapTypeControl: false,
+			center: winchester_city
 		});
 		}
 
-		// Function to search for an address and display it on the map
 		function searchAddress() {
-			const searchInput = document.getElementById("search-input");
-			const address = searchInput.value;
+		const searchInput = document.getElementById("search-input");
+		let address = searchInput.value;
 
-			// Create a new geocoder
-			const geocoder = new google.maps.Geocoder();
-
-			// Geocode the address
-			geocoder.geocode({ address: address }, (results, status) => {
-				if (status === "OK") {
-				// Get the coordinates of the address
-				const location = results[0].geometry.location;
-
-				// Clear the previous marker
-				clearMarkers();
-
-				// Update the map center and add a new marker
-				map.setCenter(location);
-				map.setZoom(13); // Set the zoom level to 13
-				addMarker(location);
-				} else {
-				alert("Geocode was not successful for the following reason: " + status);
-				}
-			});
+		// Check if the address contains a city or town name
+		if (!address.includes(',')) {
+			address += ', Hampshire, UK';
 		}
 
-		// Function to clear the previous marker
-		function clearMarkers() {
-			// Remove any existing markers from the map
-			if (marker) {
-				marker.setMap(null);
+		const geocoder = new google.maps.Geocoder();
+
+		geocoder.geocode({ address: address, componentRestrictions: { country: 'GB' } }, (results, status) => {
+			if (status === "OK") {
+			const location = results[0].geometry.location;
+
+			clearMarkers();
+
+			map.setCenter(location);
+			map.setZoom(13);
+			addMarker(location);
+			} else {
+			alert("Geocode was not successful for the following reason: " + status);
 			}
+		});
 		}
 
-		// Function to add a new marker to the map
-		function addMarker(location) {
-			marker = new google.maps.Marker({
-				position: location,
-				map: map,
-			});
+		function handleKeydown(event) {
+		if (event.key === 'Enter') {
+			searchAddress();
 		}
+		}
+
+		function clearMarkers() {
+		if (marker) {
+			marker.setMap(null);
+		}
+		}
+
+		function addMarker(location) {
+		marker = new google.maps.Marker({
+			position: location,
+			map: map,
+		});
+		}
+
     </script>
 
 
