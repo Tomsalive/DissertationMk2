@@ -167,7 +167,7 @@
     <header class="site-header">
         <nav class="site-nav">
             <div class="site-logo">
-                <a href="">WS Housing Reviewer</a>
+                <a href="/home">WS Housing Reviewer</a>
             </div>
             <ul class="site-nav-list">
                 <li class="site-nav-item"><button type="button" class="site-nav-btn" onclick="window.location.href='/reviews'">Reviews</button></li>
@@ -188,7 +188,14 @@
             <div class="review-form-container">
                 <form>
                     <div class="review-form-group">
-                        <label for="title" class="review-form-label">Title</label>
+                        <label for="search-input" class="review-form-label">Address</label>
+                        <div style="display: flex; align-items: center;">
+                            <input type="text" id="search-input" class="review-form-control" placeholder="Search for a location">
+                            <button type="submit" id="search-button" class="review-form-submit-btn" style="margin-left: 10px;">Search</button>
+                        </div>
+                    </div>
+                    <div class="review-form-group">
+                        <label for="title" class="review-form-label">Review Title</label>
                         <input type="text" class="review-form-control" id="title" placeholder="Enter a title for your review">
                     </div>
                     <div class="review-form-group">
@@ -207,7 +214,7 @@
                         </div>
                     </div>
                     <div class="review-form-group">
-                        <label for="review-body" class="review-form-label">Review</label>
+                        <label for="review-body" class="review-form-label">Review Body</label>
                         <textarea class="review-form-control" id="review-body" rows="3" placeholder="Enter your review"></textarea>
                     </div>
                     <button type="submit" class="review-form-submit-btn">Submit Review</button>
@@ -226,10 +233,41 @@
                 lng: -1.319273
             };
 
-            map = new google.maps.Map(document.getElementById("map"), {
+            map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 13,
-                center: winchester_city,
-                mapTypeControl: false,
+                center: winchester_city
+            });
+
+            const searchForm = document.getElementById('search-form');
+            searchForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const searchText = document.getElementById('search-input').value;
+                performSearch(searchText);
+            });
+        }
+
+        function performSearch(searchText) {
+            const searchBox = new google.maps.places.SearchBox(document.getElementById('search-input'));
+
+            searchBox.addListener('places_changed', function() {
+                const places = searchBox.getPlaces();
+                if (places.length === 0) {
+                    return;
+                }
+
+                const bounds = new google.maps.LatLngBounds();
+                places.forEach(function(place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    if (place.geometry.viewport) {
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
             });
         }
     </script>
