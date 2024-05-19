@@ -7,6 +7,7 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
+const favicon = require('serve-favicon'); 
 
 const app = express()
 
@@ -31,6 +32,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
 app.use(flash())
+
+app.use(favicon('./favicon.ico'))
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
