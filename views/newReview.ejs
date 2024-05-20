@@ -253,6 +253,7 @@
         geocoder.geocode({ address: address }, (results, status) => {
             if (status === "OK") {
                 const location = results[0].geometry.location;
+                console.log(location)
                 const latitude = location.lat();
                 const longitude = location.lng();
                 const coordinateInput = document.getElementById("coordinate");

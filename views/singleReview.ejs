@@ -1,26 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Review</title>
-  <style>
-    /* Add any additional styles for the single review page */
-  </style>
-</head>
-<body>
-  <header>
-    <nav>
-      <a href="/reviews">Back to Reviews</a>
-    </nav>
-  </header>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Review</title>
+    <style type="text/css">
+        /* Header and Navigation Styles */
+        .site-header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
 
-  <main>
-    <h1><%= review.title %></h1>
-    <p><%= review.address %></p>
-    <p><%= review.reviewBody %></p>
-    <p>Rating: <%= review.stars %></p>
-  </main>
+        .site-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .site-logo {
+            flex-grow: 1;
+        }
+
+        .site-logo a {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .site-nav-list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .site-nav-item {
+            margin-left: 20px;
+        }
+
+        .site-nav-btn {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 15px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .site-nav-btn:hover {
+            background-color: #555;
+        }
+
+        /* Layout Styles */
+        .row {
+            display: flex;
+            margin-top: 80px;
+        }
+
+        .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 20px;
+        }
+
+        /* Map Styles */
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .review-form-container {
+            padding: 20px 60px 20px 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 60px;
+        }
+
+        .review-form-group {
+            margin-bottom: 20px;
+        }
+
+        .review-form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .review-form-control {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .review-form-control.review-body {
+            height: 120px;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+        }
+
+        .star-rating-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .star-rating {
+            display: flex;
+            align-items: center;
+            color: #ccc;
+            font-size: 20px;
+            margin-right: 5px;
+        }
+
+        .star-rating .star {
+            margin-right: 5px;
+        }
+
+        .star-rating .star.active {
+            color: #ffd700;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="site-nav">
+            <div class="site-logo">
+                <a href="/home">WS Housing Reviewer</a>
+            </div>
+            <ul class="site-nav-list">
+                <li class="site-nav-item"><button type="button" class="site-nav-btn" onclick="window.location.href='/reviews'">Reviews</button></li>
+                <li class="site-nav-item">
+                    <form action="/logout?_method=DELETE" method="POST">
+                        <button type="submit" class="site-nav-btn">Log Out</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="row">
+        <div class="col-6">
+            <div id="map"></div>
+        </div>
+        <div class="col-6">
+          <div class="review-form-container">
+            <div class="review-form-group">
+                <label for="search-input" class="review-form-label">Address</label>
+                <div style="display: flex; align-items: center;">
+                    <span class="review-form-control"><%= review.address %>
+                </div>
+            </div>
+            <div class="review-form-group">
+                <label for="title" class="review-form-label">Review Title</label>
+                <span class="review-form-control"><%= review.title %>
+            </div>
+            <div class="review-form-group star-rating-group">
+                <div class="star-rating">
+                  <% const numStars = parseInt(review.stars, 10); %>
+                  <% for (let i = 0; i < numStars; i++) { %>
+                  <span class="star active">&#9733;</span>
+                  <% } %>
+                  <% for (let i = numStars; i < 5; i++) { %>
+                  <span class="star">&#9733;</span>
+                  <% } %>
+                </div>
+                <span>(<%= review.stars %>)
+            </div>
+            <div class="review-form-group">
+                <label for="review-body" class="review-form-label">Review Body</label>
+                <span class="review-form-control review-body"><%= review.reviewBody %>
+            </div>
+            <div>
+                <input type="hidden" id="coordinate" name="coordinate" value=<%= review.coordinate %>>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= process.env.API_KEY || 'Invalid or No API Key' %>&callback=initMap&libraries=&v=weekly" async></script>
+    <script>
+        let map;
+        let marker;
+
+        function review_coordinate() {
+            const coordinateString = document.getElementById('coordinate').value;
+            if (typeof coordinateString === 'string' && coordinateString.includes(',')) {
+                const [latitude, longitude] = coordinateString.split(',');
+                return {
+                    lat: parseFloat(latitude.trim()),
+                    lng: parseFloat(longitude.trim())
+                };
+            } else {
+                // Handle the case where coordinateString is not a valid string or does not contain a comma
+                return { lat: 0, lng: 0 };
+            }
+        }
+
+        function initMap() {
+            const coordinates = review_coordinate();
+            const winchester_city = {
+                lat: 51.063696,
+                lng: -1.319273
+            };
+            console.log(coordinates)
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 18,
+                center: coordinates
+            }),
+            marker = new google.maps.Marker({
+                position: coordinates,
+                map: map,
+            });
+        }
+    </script>
 </body>
 </html>

@@ -38,9 +38,12 @@ DELETE http://localhost:3000/reviews/662295cf091caaae801eeee8
 
 ###
 
-PATCH http://localhost:3000/reviews/662678f6b698d598866773f8
+PATCH http://localhost:3000/reviews/update/664b76ac4ab530a68e2df596
 Content-Type: application/json
 
 {
-    "title": "That Place sucked balls"
+    "title": "That Place wasnt brill",
+    "reviewBody": "test",
+    "stars": "3",
+    "address": "21 kings avenue, winchester"
 }

@@ -55,7 +55,7 @@ res.render("index")
 
 app.get("/home", checkAuthenticated, (req, res) => {
   console.log("GET HOME PAGE")
-res.render("home", {username: req.user.username})
+  res.render("home")
 })
 
 app.delete("/logout", (req, res) => {

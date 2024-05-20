@@ -50,13 +50,77 @@ router.get('/new', checkAuthenticated, async (req, res) => {
       });
 
 router.get("/myreviews",checkAuthenticated, async (req, res) => {
-  res.render("userReviews")
+    try {
+      const userID = req.session.passport.user.ID;
+      const reviews = await Review.find({ userID: userID })
+      //res.json(reviews)
+      res.render("userReviews", { reviews: reviews })
+    } catch (err) {
+      res.status(500).json({ message: err.message})
+    } 
 })
 
-router.get("/:id", checkAuthenticated, async (req, res) => {
+router.get("/update/:ReviewID",checkAuthenticated, async (req, res) => {
+  try {
+    //const userID = req.session.passport.user.ID;
+    //const reviews = await Review.find({ userID: userID })
+    //res.json(reviews)
+    const review = await Review.findById(req.params.ReviewID)
+    res.render("updateReview", { review: review })
+  } catch (err) {
+    res.status(500).json({ message: err.message})
+  } 
+})
+
+router.patch("/update/:ReviewID", checkAuthenticated, async (req, res) => {
+  console.log("here");
+  console.log("Requested review ID:", req.params.ReviewID);
+
+  // Fetch the review from the database
+  const review = await Review.findById(req.params.ReviewID);
+  console.log("Found review:", review);
+
+  // Update the review properties
+  if (req.body.title != null) {
+    review.title = req.body.title;
+  }
+  if (req.body.address != null) {
+    review.address = req.body.address;
+  }
+  if (req.body.reviewBody != null) {
+    review.reviewBody = req.body.reviewBody;
+  }
+  if (req.body.stars != null) {
+    review.stars = req.body.stars;
+  }
+  if (req.body.coordinate != null) {
+    review.coordinate = req.body.coordinate;
+  }
+
+  try {
+    const updatedReview = await review.save();
+    res.json(updatedReview);
+    console.log("Review Updated. Updated Review:", updatedReview);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
+router.delete("/update/:ReviewID", checkAuthenticated, getReview, async (req, res) => {
+  try {
+      await Review.findByIdAndDelete(req.params.ReviewID)
+      res.json({ message: "Deleted Review"})
+  } catch (err) {
+      //console.log("here")
+      res.status(500).json({ message: err.message})
+  }
+})
+
+router.get("/:ReviewID", checkAuthenticated, async (req, res) => {
     try {
-      console.log("Requested review ID:", req.params.id);
-      const review = await Review.findById(req.params.id);
+      console.log("Requested review ID:", req.params.ReviewID);
+      const review = await Review.findById(req.params.ReviewID);
       console.log("Found review:", review);
       res.render("singleReview", { review: review });
     } catch (err) {
@@ -65,38 +129,7 @@ router.get("/:id", checkAuthenticated, async (req, res) => {
     }
   });
 
-router.patch("/:ReviewID", getReview, async (req, res) => {
-    if (req.body.title != null) {
-        res.review.title = req.body.title
-      }
-    if (req.body.address != null) {
-        res.review.address = req.body.address
-      }
-    if (req.body.review != null) {
-        res.review.review = req.body.review
-      }
-    if (req.body.stars != null) {
-        res.review.stars = req.body.stars
-      }
-    try {
-        const updatedReview = await res.review.save()
-        res.json(updatedReview)
-      } catch (err) {
-        res.status(400).json({ message: err.message })
-    }
 
-})
-
-
-router.delete("/:ReviewID", getReview, async (req, res) => {
-    try {
-        await Review.findByIdAndDelete(req.params.ReviewID)
-        res.json({ message: "Deleted Review"})
-    } catch (err) {
-        //console.log("here")
-        res.status(500).json({ message: err.message})
-    }
-})
 
 async function getReview(req, res, next) {
     let review
@@ -110,7 +143,6 @@ async function getReview(req, res, next) {
     }
     
     res.review = review
-    console.log(res.review)
     next()
 }
 

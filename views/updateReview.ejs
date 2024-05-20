@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Review</title>
+    <style type="text/css">
+        /* Header and Navigation Styles */
+        .site-header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .site-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .site-logo {
+            flex-grow: 1;
+        }
+
+        .site-logo a {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .site-nav-list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .site-nav-item {
+            margin-left: 20px;
+        }
+
+        .site-nav-btn {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 15px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .site-nav-btn:hover {
+            background-color: #555;
+        }
+
+        /* Layout Styles */
+        .row {
+            display: flex;
+            margin-top: 80px;
+        }
+
+        .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 20px;
+        }
+
+        /* Map Styles */
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Review Form Styles */
+        .review-form-container {
+            padding: 20px 60px 20px 20px; /* Increased right padding to 60px */
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 60px; /* Add 60px margin to the right of the form container */
+        }
+
+        .review-form-group {
+            margin-bottom: 20px;
+        }
+
+        .review-form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .review-form-control {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        textarea.review-form-control {
+            height: 120px;
+        }
+
+        .review-form-update-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .review-form-update-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .review-stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+
+        .review-stars > input {
+            display: none;
+        }
+
+        .review-stars > label {
+            position: relative;
+            width: 1em;
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .review-stars > label::before {
+            content: "\2605";
+            position: absolute;
+            opacity: 0;
+        }
+
+        .review-stars > label:hover:before,
+        .review-stars > label:hover ~ label:before,
+        .review-stars > input:checked ~ label:before {
+            opacity: 1;
+            color: #fbbc04;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="site-nav">
+            <div class="site-logo">
+                <a href="/home">WS Housing Reviewer</a>
+            </div>
+            <ul class="site-nav-list">
+                <li class="site-nav-item"><button type="button" class="site-nav-btn" onclick="window.location.href='/reviews'">Reviews</button></li>
+                <li class="site-nav-item">
+                    <form action="/logout?_method=DELETE" method="POST">
+                        <button type="submit" class="site-nav-btn">Log Out</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="row">
+        <div class="col-6">
+            <div id="map"></div>
+        </div>
+        <div class="col-6">
+            <div class="review-form-container">
+                <form id="review-form" data-review="<%= JSON.stringify(review) %>">
+                    <div class="review-form-group">
+                      <label for="search-input" class="review-form-label">Address</label>
+                      <div style="display: flex; align-items: center;">
+                        <input type="text" id="search-input" class="review-form-control" placeholder=<%= review.address %> value="<%= review.address %>" onkeydown="handleKeydown(event)">
+                        <button type="button" id="search-button" class="review-form-update-btn" style="margin-left: 10px;" onclick="searchAddress()">Search</button>
+                      </div>
+                    </div>
+                    <div class="review-form-group">
+                      <label for="title" class="review-form-label">Review Title</label>
+                      <input type="text" class="review-form-control" id="title" placeholder=<%= review.title %> value="<%= review.title %>">
+                    </div>
+                    <div class="review-form-group">
+                        <label for="stars" class="review-form-label">Stars</label>
+                        <div class="review-stars">
+                            <input type="radio" id="stars5" name="stars" value="5" <%= review.stars === '5' ? 'checked' : '' %>>
+                            <label for="stars5">&#9733;</label>
+                            <input type="radio" id="stars4" name="stars" value="4" <%= review.stars === '4' ? 'checked' : '' %>>
+                            <label for="stars4">&#9733;</label>
+                            <input type="radio" id="stars3" name="stars" value="3" <%= review.stars === '3' ? 'checked' : '' %>>
+                            <label for="stars3">&#9733;</label>
+                            <input type="radio" id="stars2" name="stars" value="2" <%= review.stars === '2' ? 'checked' : '' %>>
+                            <label for="stars2">&#9733;</label>
+                            <input type="radio" id="stars1" name="stars" value="1" <%= review.stars === '1' ? 'checked' : '' %>>
+                            <label for="stars1">&#9733;</label>
+                          </div>
+                      </div>
+                    <div>
+                        <input type="hidden" id="coordinate" name="coordinate" value=<%= review.coordinate %>>
+                    </div>
+                    <div class="review-form-group">
+                      <label for="review-body" class="review-form-label">Review Body</label>
+                      <textarea class="review-form-control" id="review-body" rows="3"><%= review.reviewBody %></textarea>
+                    </div>
+                    <button type="submit" class="review-form-update-btn">Update Review</button>
+                    <button type="button" class="review-form-update-btn" onclick="deleteReview()">Delete Review</button>
+                  </form>                  
+            </div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= process.env.API_KEY || 'Invalid or No API Key' %>&callback=initMap&libraries=&v=weekly" async></script>
+    <script>
+		let map;
+		let marker;
+
+        function review_coordinate() {
+            const coordinateString = document.getElementById('coordinate').value;
+            if (typeof coordinateString === 'string' && coordinateString.includes(',')) {
+                const [latitude, longitude] = coordinateString.split(',');
+                return {
+                lat: parseFloat(latitude.trim()),
+                lng: parseFloat(longitude.trim())
+                };
+            } else {
+                // Handle the case where coordinateString is not a valid string or does not contain a comma
+                return { lat: 0, lng: 0 };
+            }
+        }
+
+        function initMap() {
+            const review_coordinates = review_coordinate();
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 18,
+                center: review_coordinates
+            }),
+
+            marker = new google.maps.Marker({
+                position: coordinates,
+                map: map,
+            });
+        }
+        function searchAddress() {
+            const searchInput = document.getElementById("search-input");
+            let address = searchInput.value.trim();
+
+            const geocoder = new google.maps.Geocoder();
+
+            geocoder.geocode({ address: address }, (results, status) => {
+                if (status === "OK") {
+                    const location = results[0].geometry.location;
+                    console.log(location)
+                    const latitude = location.lat();
+                    const longitude = location.lng();
+                    const coordinateInput = document.getElementById("coordinate");
+                    coordinateInput.value = `${latitude},${longitude}`;
+
+                    clearMarkers();
+
+                    map.setCenter(location);
+                    map.setZoom(18);
+                    addMarker(location);
+                } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        }
+
+        function handleKeydown(event) {
+            if (event.key === 'Enter') {
+                searchAddress();
+            }
+        }
+
+        function clearMarkers() {
+            if (marker) {
+                marker.setMap(null);
+            }
+            }
+
+            function addMarker(location) {
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+            }
+
+    </script>
+
+    <script>
+        const reviewForm = document.getElementById('review-form');
+        const reviewData = JSON.parse(reviewForm.dataset.review);
+
+        reviewForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const updatedReviewData = {
+            address: document.getElementById('search-input').value,
+            title: document.getElementById('title').value,
+            stars: document.querySelector('input[name="stars"]:checked').value,
+            reviewBody: document.getElementById('review-body').value,
+            coordinate: document.getElementById('coordinate').value,
+        };
+
+        try {
+            const response = await fetch(`/reviews/update/${reviewData._id.toString()}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedReviewData),
+            });
+
+            if (response.ok) {
+            // Handle successful update
+            console.log('Review updated successfully');
+            } else {
+            // Handle error
+            console.error('Error updating the review:', await response.text());
+            alert('An error occurred while updating the review. Please try again later.');
+            }
+        } catch (error) {
+            console.error('Error updating the review:', error);
+            alert('An error occurred while updating the review. Please try again later.');
+        }
+        });
+      </script>
+      <script>
+        async function deleteReview() {
+        try {
+            const reviewData = JSON.parse(reviewForm.dataset.review);
+
+            // Add a confirmation popup
+            if (confirm('Are you sure you want to delete this review?')) {
+            const response = await fetch(`/reviews/update/${reviewData._id.toString()}`, {
+                method: 'DELETE',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                // Handle successful delete
+                console.log('Review deleted successfully');
+                // You can also add additional logic here, such as redirecting the user or updating the UI
+                window.location.href = '../myreviews';
+            } else {
+                // Handle error
+                console.error('Error deleting the review:', await response.text());
+                alert('An error occurred while deleting the review. Please try again later.');
+            }
+            }
+        } catch (error) {
+            console.error('Error deleting the review:', error);
+            alert('An error occurred while deleting the review. Please try again later.');
+        }
+        }
+      </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Review's</title>
+    <style type="text/css">
+		/* Header and Navigation Styles */
+		.full-width-header {
+		background-color: #333;
+		color: #fff;
+		padding: 10px 0;
+		width: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 10;
+		}
+
+		nav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		max-width: 1200px;
+		margin: 0 auto;
+		}
+
+		.logo {
+		flex-grow: 1;
+		}
+
+		.logo a {
+		font-size: 24px;
+		font-weight: bold;
+		color: #fff;
+		text-decoration: none;
+		}
+
+		nav ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		}
+
+		nav ul li {
+		margin-left: 20px;
+		}
+
+		.nav-btn {
+		color: #fff;
+		text-decoration: none;
+		font-size: 16px;
+		padding: 10px 15px;
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		}
+
+		.nav-btn:hover {
+		background-color: #555;
+		}
+		
+		/*Search Bar style*/
+
+		.search-container {
+		display: flex;
+		justify-content: center;
+		margin-top: 80px;
+		}
+
+		.search-input {
+		width: 300px;
+		padding: 10px;
+		font-size: 16px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		}
+
+		/* Map Styles */
+		#map {
+		height: 450px;
+		width: 1000px;
+		margin-top: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+		}
+
+        .review-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		grid-gap: 20px;
+		padding: 20px;
+		}
+
+		.review-item {
+		background-color: #f1f1f1;
+		padding: 20px;
+		border-radius: 5px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		display: flex;
+		align-items: center;
+		}
+
+		.review-item .review-content {
+		flex-grow: 1;
+		}
+
+		.review-item .review-button {
+		margin-right: 20px;
+		background-color: #4CAF50;
+		color: white;
+		border: none;
+		padding: 10px 20px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		border-radius: 4px;
+		cursor: pointer;
+		}
+
+		/*stars*/
+		.star-rating {
+		display: flex;
+		align-items: center;
+		color: #ccc;
+		font-size: 20px;
+		}
+
+		.star-rating .star {
+		margin-right: 5px;
+		}
+
+		.star-rating .star.active {
+		color: #ffd700;
+		}
+
+	</style>
+  </head>
+
+  <body>
+    <header class="full-width-header">
+      <nav>
+        <div class="logo">
+          <a href="/home">WS Housing Reviewer</a>
+        </div>
+        <ul>
+            <li><button type="button" class="nav-btn" onclick="window.location.href='/reviews/new'">New Review</button></li>
+			<li><button type="button" class="nav-btn" onclick="window.location.href='/reviews'">All Reviews</button></li>
+            <li>
+                <form action="/logout?_method=DELETE" method="POST">
+                  <button type="submit" class="nav-btn">Log Out</button>
+                </form>
+            </li>
+        </ul>
+      </nav>
+    </header>
+
+	<h1>Reviews</h1>
+	<% if (reviews.length > 0) { %>
+	  <div class="review-list">
+		<% reviews.forEach(review => { %>
+		  <div class="review-item">
+			<a href="/reviews/<%= review._id %>" class="review-button">View</a>
+			<a href="/reviews/update/<%= review._id %>" class="review-button">Change</a>
+			<div class="review-content">
+			  <h2><%= review.title %></h2>
+			  <p><%= review.address %></p>
+			  <div class="star-rating">
+				<% const numStars = parseInt(review.stars, 10); %>
+				<% for (let i = 0; i < numStars; i++) { %>
+				<span class="star active">&#9733;</span>
+				<% } %>
+				<% for (let i = numStars; i < 5; i++) { %>
+				<span class="star">&#9733;</span>
+				<% } %>
+				<span>(<%= review.stars %>)
+			  </div>
+			</div>
+		  </div>
+		<% }) %>
+	  </div>
+	<% } else { %>
+	  <p>No reviews found.</p>
+	<% } %>
+    
+  </body>
+</html>
