@@ -85,9 +85,9 @@ function logger(req, res, next) {
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
+    req.userID = req.user._id;
     return next()
   }
-
   res.redirect('/login')
 }
 

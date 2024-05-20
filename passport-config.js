@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 
 const User = require("./models/user")
 
-function initialize(passport, getUserByEmail, getUserById) {
+function initialize(passport, getUserById) {
   const authenticateUser = async (email, password, done) => {
     try {
       const user = await User.findOne({ email: email.toLowerCase() }); // Convert email to lowercase
@@ -32,7 +32,7 @@ function initialize(passport, getUserByEmail, getUserById) {
   );
 
   passport.serializeUser((user, done) => {
-    done(null, user._id);
+    done(null, {ID: user._id});
   });
 
   passport.deserializeUser((_id, done) => {

@@ -18,30 +18,40 @@ router.get("/", checkAuthenticated, async (req, res) => {
 // reviews.js
 router.get('/new', checkAuthenticated, async (req, res) => {
     try {
-      const user = await User.findById(req.user._id);
-      res.render('newReview', { userID: user._id });
+      res.render('newReview');
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   });
   
   router.post('/new', checkAuthenticated, async (req, res) => {
-    const review = new Review({
-      userID: req.body.userID,
-      title: req.body.title,
-      address: req.body.address,
-      coordinate: req.body.coordinate,
-      reviewBody: req.body.reviewBody,
-      stars: req.body.stars,
-    });
-  
-    try {
-      const newReview = await review.save();
-      res.status(201).json(newReview);
-    } catch (err) {
-      res.status(400).json({ message: err.message });
-    }
-  });
+    if (req.session.passport && req.session.passport.user && req.session.passport.user.ID) {
+        const userID = req.session.passport.user.ID;
+        const review = new Review({
+          userID: userID,
+          title: req.body.title,
+          address: req.body.address,
+          coordinate: req.body.coordinate,
+          reviewBody: req.body.reviewBody,
+          stars: req.body.stars,
+        });
+      
+        try {
+          const newReview = await review.save();
+          res.status(201).json(newReview);
+        } catch (err) {
+          res.status(400).json({ message: err.message });
+        }
+      } else {
+        // User information is not available yet
+        console.log('User ID is undefined');
+        return res.status(400).send('User ID is undefined');
+      }
+      });
+
+router.get("/myreviews",checkAuthenticated, async (req, res) => {
+  res.render("userReviews")
+})
 
 router.get("/:id", checkAuthenticated, async (req, res) => {
     try {
@@ -105,11 +115,10 @@ async function getReview(req, res, next) {
 }
 
 function checkAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next()
-    }
-  
-    res.redirect('/login')
+  if (req.isAuthenticated()) {
+    return next()
+  }
+  res.redirect('/home')
 }
 
 module.exports = router

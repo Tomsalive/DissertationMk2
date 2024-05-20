@@ -215,7 +215,6 @@
                     </div>
                     <div>
                         <input type="hidden" id="coordinate" name="coordinate" value="">
-                        <input type="hidden" id="userID" name="userID" value="<%= userID %>">
                     </div>
                     <div class="review-form-group">
                       <label for="review-body" class="review-form-label">Review Body</label>
@@ -302,7 +301,6 @@
             const reviewBody = document.getElementById('review-body').value;
             const address = document.getElementById('search-input').value;
             const coordinate = document.getElementById('coordinate').value;
-            const userID = document.getElementById('userID').value;
 
             try {
                 const response = await fetch('/reviews/new', {
@@ -310,7 +308,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userID, title, address, coordinate, reviewBody, stars }),
+                body: JSON.stringify({title, address, coordinate, reviewBody, stars }),
                 });
 
                 if (response.ok) {
