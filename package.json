@@ -1,7 +1,7 @@
 {
   "name": "dissertationmk2",
   "version": "1.0.0",
-  "description": "",
+  "description": ".env file with:\r DATABASE_URL=\r API_KEY=\r SESSION_SECRET=\r PORT=",
   "main": "server.js",
   "scripts": {
     "devStart": "nodemon server.js",
