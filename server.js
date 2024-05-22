@@ -50,12 +50,7 @@ app.use(logger)
 
 app.get("/", (req, res) => {
   console.log("GET INDEX PAGE")
-res.render("index")
-})
-
-app.get("/home", checkAuthenticated, (req, res) => {
-  console.log("GET HOME PAGE")
-  res.render("home")
+  res.render("index")
 })
 
 app.delete("/logout", (req, res) => {
@@ -72,11 +67,13 @@ app.delete("/logout", (req, res) => {
 const reviewRouter = require("./routes/reviews")
 const loginRouter = require("./routes/login")
 const signupRouter = require("./routes/signup")
+const homeRouter = require("./routes/home")
 
 //app.use("/users", userRouter)
 app.use("/reviews", reviewRouter)
 app.use("/login", loginRouter)
 app.use("/signup", signupRouter)
+app.use("/home", homeRouter)
 
 function logger(req, res, next) {
     console.log(req.originalUrl)

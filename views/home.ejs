@@ -123,61 +123,72 @@
 	</script>
 	<script>
  
-		let map;
-		let marker;
+ let map;
+let markers = [];
 
-		function initMap() {
-		const winchester_city = {
-			lat: 51.063696,
-			lng: -1.319273
-		};
+function initMap() {
+  const winchester_city = {
+    lat: 51.063696,
+    lng: -1.319273
+  };
 
-		map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 13,
-			center: winchester_city
-		});
-		}
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 13,
+    center: winchester_city
+  });
+}
 
-		function searchAddress() {
-		const searchInput = document.getElementById("search-input");
-		let address = searchInput.value.trim();
+function addMarkers(reviews) {
+  // Clear any existing markers
+  clearMarkers();
 
-		const geocoder = new google.maps.Geocoder();
+  // Add a marker for each review
+  reviews.forEach(review => {
+    const location = { lat: review.latitude, lng: review.longitude };
+    const marker = new google.maps.Marker({
+      position: location,
+      map: map
+    });
+    markers.push(marker);
+  });
+}
 
-		geocoder.geocode({ address: address }, (results, status) => {
-		if (status === "OK") {
-			const location = results[0].geometry.location;
+function clearMarkers() {
+  // Remove all markers from the map
+  markers.forEach(marker => marker.setMap(null));
+  markers = [];
+}
 
-			clearMarkers();
+function searchAddress() {
+  const searchInput = document.getElementById("search-input");
+  let address = searchInput.value.trim();
 
-			map.setCenter(location);
-			map.setZoom(13);
-			addMarker(location);
-		} else {
-			alert("Geocode was not successful for the following reason: " + status);
-		}
-		});
-	}
+  const geocoder = new google.maps.Geocoder();
 
+  geocoder.geocode({ address: address }, (results, status) => {
+    if (status === "OK") {
+      const location = results[0].geometry.location;
 
-		function handleKeydown(event) {
-		if (event.key === 'Enter') {
-			searchAddress();
-		}
-		}
+      clearMarkers();
+      addMarkers([{ latitude: location.lat(), longitude: location.lng() }]);
 
-		function clearMarkers() {
-		if (marker) {
-			marker.setMap(null);
-		}
-		}
+      map.setCenter(location);
+      map.setZoom(13);
+    } else {
+      alert("Geocode was not successful for the following reason: " + status);
+    }
+  });
+}
 
-		function addMarker(location) {
-		marker = new google.maps.Marker({
-			position: location,
-			map: map,
-		});
-		}
+// Assuming you have an array of review objects with latitude and longitude properties
+const reviews = [
+  { id: 1, latitude: 51.064696, longitude: -1.320273 },
+  { id: 2, latitude: 51.062696, longitude: -1.318273 },
+  { id: 3, latitude: 51.063696, longitude: -1.321273 }
+];
+
+initMap();
+addMarkers(reviews);
 
     </script>
 

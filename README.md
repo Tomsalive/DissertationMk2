@@ -2,6 +2,7 @@
 DATABASE_URL=
 API_KEY=
 SESSION_SECRET=
+PORT=3000
 
 
 npm install
