@@ -122,7 +122,14 @@ router.get("/:ReviewID", checkAuthenticated, async (req, res) => {
       console.log("Requested review ID:", req.params.ReviewID);
       const review = await Review.findById(req.params.ReviewID);
       console.log("Found review:", review);
-      res.render("singleReview", { review: review });
+      console.log("attempting to retrive userID");
+      const user = await User.findById(review.userID);
+      console.log("userID:", user);
+
+      console.log("attempting to retrive username");
+      const username = user.username;
+      console.log("username:", username);
+      res.render("singleReview", { review: review, username});
     } catch (err) {
       console.error("Error fetching review:", err);
       res.status(500).json({ message: err.message });
