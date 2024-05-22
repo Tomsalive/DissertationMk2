@@ -87,6 +87,56 @@
 		margin-right: auto;
 		display: block;
 		}
+
+		.review-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		grid-gap: 20px;
+		padding: 20px;
+		}
+
+		.review-item {
+		background-color: #f1f1f1;
+		padding: 20px;
+		border-radius: 5px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		display: flex;
+		align-items: center;
+		}
+
+		.review-item .review-content {
+		flex-grow: 1;
+		}
+
+		.review-item .review-button {
+		margin-right: 20px;
+		background-color: #4CAF50;
+		color: white;
+		border: none;
+		padding: 10px 20px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		border-radius: 4px;
+		cursor: pointer;
+		}
+
+		/*stars*/
+		.star-rating {
+		display: flex;
+		align-items: center;
+		color: #ccc;
+		font-size: 20px;
+		}
+
+		.star-rating .star {
+		margin-right: 5px;
+		}
+
+		.star-rating .star.active {
+		color: #ffd700;
+		}
 	</style>
 </head>
 
@@ -98,7 +148,7 @@
 		  </div>
 		  <ul>
 			<%# <li><button type="button" class="nav-btn">About</button></li> %>
-			<li><button type="button" class="nav-btn" onclick="window.location.href='/reviews'">Reviews</button></li>
+			<li><button type="button" class="nav-btn" onclick="window.location.href='/reviews'">All Reviews</button></li>
 			<li>
 			  <form action="/logout?_method=DELETE" method="POST">
 				<button type="submit" class="nav-btn">Log Out</button>
@@ -110,86 +160,129 @@
 
 	<div class="search-container">
 		<input type="text" placeholder="Search..." class="search-input" id="search-input" onkeydown="handleKeydown(event)">
-		<button type="button" class="search-btn" onclick="searchAddress()">Search</button>
+		<button type="button" class="search-button" onclick="searchAddress()">Search</button>
 	</div>
 
 	<!--The div element for the map -->
 	<div id="map"></div>
 
+	<h1>Recent Reviews</h1>
+	<% if (reviews.length > 0) { %>
+	  <div class="review-list">
+		<% reviews.forEach(review => { %>
+			<div class="review-item">
+				<a href="/reviews/<%= review._id %>" class="review-button">View</a>
+				<div class="review-content">
+				<h2><%= review.title %></h2>
+				<p><%= review.address %></p>
+				<input type="hidden" id="coordinate" name="coordinate" value=<%= review.coordinate %>>
+				<div class="star-rating">
+					<% const numStars = parseInt(review.stars, 10); %>
+					<% for (let i = 0; i < numStars; i++) { %>
+					<span class="star active">&#9733;</span>
+					<% } %>
+					<% for (let i = numStars; i < 5; i++) { %>
+					<span class="star">&#9733;</span>
+					<% } %>
+					<span>(<%= review.stars %>)
+				</div>
+				</div>
+			</div>
+		<% }) %>
+	  </div>
+	<% } else { %>
+	  <p>No reviews found.</p>
+	<% } %>
+
 	<!--Add a script by google -->
-	<script src=
-"https://maps.googleapis.com/maps/api/js?key=<%= process.env.API_KEY || 'Invalid or No API Key' %>&callback=initMap&libraries=&v=weekly"
-		async>
+	<script 
+	src= "https://maps.googleapis.com/maps/api/js?key=<%= process.env.API_KEY || 'Invalid or No API Key' %>&callback=initMap&libraries=&v=weekly" async>
 	</script>
 	<script>
- 
- let map;
-let markers = [];
+		let map;
+		let marker;
 
-function initMap() {
-  const winchester_city = {
-    lat: 51.063696,
-    lng: -1.319273
-  };
+		function initMap() {
+			const winchester_city = {
+				lat: 51.063696,
+				lng: -1.319273
+			};
 
-  map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 13,
-    center: winchester_city
-  });
-}
+			map = new google.maps.Map(document.getElementById('map'), {
+				zoom: 13,
+				center: winchester_city
+			});
 
-function addMarkers(reviews) {
-  // Clear any existing markers
-  clearMarkers();
+			placeReviewMarkers();
 
-  // Add a marker for each review
-  reviews.forEach(review => {
-    const location = { lat: review.latitude, lng: review.longitude };
-    const marker = new google.maps.Marker({
-      position: location,
-      map: map
-    });
-    markers.push(marker);
-  });
-}
+		}
 
-function clearMarkers() {
-  // Remove all markers from the map
-  markers.forEach(marker => marker.setMap(null));
-  markers = [];
-}
+		function placeReviewMarkers() {
+			const reviewElements = document.querySelectorAll('#coordinate');
+			reviewElements.forEach(element => {
+				const coordinateString = element.value;
+				placepoint(coordinateString);
+			});
+		}
 
-function searchAddress() {
-  const searchInput = document.getElementById("search-input");
-  let address = searchInput.value.trim();
+        function searchAddress() {
+			const searchInput = document.getElementById("search-input");
+			let address = searchInput.value.trim();
+			if (address === "") {
+				initMap()
+			} else{
+				const geocoder = new google.maps.Geocoder();
 
-  const geocoder = new google.maps.Geocoder();
+				geocoder.geocode({ address: address }, (results, status) => {
+					if (status === "OK") {
+						const location = results[0].geometry.location;
+						console.log(location)
+						const latitude = location.lat();
+						const longitude = location.lng();
 
-  geocoder.geocode({ address: address }, (results, status) => {
-    if (status === "OK") {
-      const location = results[0].geometry.location;
+						clearMarkers();
 
-      clearMarkers();
-      addMarkers([{ latitude: location.lat(), longitude: location.lng() }]);
+						map.setCenter(location);
+						map.setZoom(18);
+						addMarker(location);
+					} else {
+						alert("Geocode was not successful for the following reason: " + status);
+					}
+				}); 
+			}
+    	}
 
-      map.setCenter(location);
-      map.setZoom(13);
-    } else {
-      alert("Geocode was not successful for the following reason: " + status);
-    }
-  });
-}
+        function handleKeydown(event) {
+            if (event.key === 'Enter') {
+                searchAddress();
+            }
+        }
 
-// Assuming you have an array of review objects with latitude and longitude properties
-const reviews = [
-  { id: 1, latitude: 51.064696, longitude: -1.320273 },
-  { id: 2, latitude: 51.062696, longitude: -1.318273 },
-  { id: 3, latitude: 51.063696, longitude: -1.321273 }
-];
 
-initMap();
-addMarkers(reviews);
+		function clearMarkers() {
+		if (marker) {
+			marker.setMap(null);
+		}
+		}
 
+		function placepoint(coordinateString) {
+		if (typeof coordinateString === 'string' && coordinateString.includes(',')) {
+			const [latitude, longitude] = coordinateString.split(',');
+			const formattedCoordinate = {
+			lat: parseFloat(latitude.trim()),
+			lng: parseFloat(longitude.trim())
+			};
+			addMarker(formattedCoordinate);
+		}
+		}
+
+		function addMarker(location) {
+		const newMarker = new google.maps.Marker({
+			position: location,
+			map: map,
+			title: "test"
+		});
+		}
     </script>
 
 
