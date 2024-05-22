@@ -189,6 +189,9 @@
                 <label>By: <%= username %> </label>
             </div>
             <div>
+                <label>Posted: <%= new Date(review.reviewDate).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) %> </label>
+            </div>
+            <div>
                 <input type="hidden" id="coordinate" name="coordinate" value=<%= review.coordinate %>>
             </div>
         </div>
