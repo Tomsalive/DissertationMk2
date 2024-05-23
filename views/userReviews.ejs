@@ -164,8 +164,12 @@
 	  <div class="review-list">
 		<% reviews.forEach(review => { %>
 		  <div class="review-item">
-			<a href="/reviews/<%= review._id %>" class="review-button">View</a>
-			<a href="/reviews/update/<%= review._id %>" class="review-button">Change</a>
+			<div>
+				<a href="/reviews/<%= review._id %>" class="review-button">View</a>
+			</div>
+			<div>
+				<a href="/reviews/update/<%= review._id %>" class="review-button">Change</a>
+			</div>
 			<div class="review-content">
 			  <h2><%= review.title %></h2>
 			  <p><%= review.address %></p>

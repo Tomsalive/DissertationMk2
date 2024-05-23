@@ -190,13 +190,13 @@
                     <div class="review-form-group">
                       <label for="search-input" class="review-form-label">Address</label>
                       <div style="display: flex; align-items: center;">
-                        <input type="text" id="search-input" class="review-form-control" placeholder=<%= review.address %> value="<%= review.address %>" onkeydown="handleKeydown(event)">
+                        <input type="text" id="search-input" class="review-form-control" placeholder="<%= review.address %>" value="<%= review.address %>" onkeydown="handleKeydown(event)">
                         <button type="button" id="search-button" class="review-form-update-btn" style="margin-left: 10px;" onclick="searchAddress()">Search</button>
                       </div>
                     </div>
                     <div class="review-form-group">
                       <label for="title" class="review-form-label">Review Title</label>
-                      <input type="text" class="review-form-control" id="title" placeholder=<%= review.title %> value="<%= review.title %>">
+                      <input type="text" class="review-form-control" id="title" placeholder="<%= review.title %>" value="<%= review.title %>">
                     </div>
                     <div class="review-form-group">
                         <label for="stars" class="review-form-label">Stars</label>
@@ -218,7 +218,7 @@
                     </div>
                     <div class="review-form-group">
                       <label for="review-body" class="review-form-label">Review Body</label>
-                      <textarea class="review-form-control" id="review-body" rows="3"><%= review.reviewBody %></textarea>
+                      <textarea class="review-form-control" id="review-body" rows="3" placeholder="<%= review.reviewBody %>"><%= review.reviewBody %></textarea>
                     </div>
                     <div class="review-form-group">
                         <label>
@@ -338,6 +338,7 @@
             if (response.ok) {
             // Handle successful update
             console.log('Review updated successfully');
+            alert('Review Successfully updated')
             } else {
             // Handle error
             console.error('Error updating the review:', await response.text());
