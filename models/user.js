@@ -12,6 +12,11 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true
+    },
+    accountCreationDate: {
+        type: Date,
+        required: true,
+        default: Date.now
     }
 })
 

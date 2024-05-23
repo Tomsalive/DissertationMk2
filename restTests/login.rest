@@ -7,3 +7,14 @@ Content-Type: application/json
 "email": "example@email.com"
 
 }
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+"password": "3",
+"email": "3@3"
+
+}
