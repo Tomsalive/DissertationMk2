@@ -62,63 +62,87 @@ router.get("/myreviews",checkAuthenticated, async (req, res) => {
 })
 
 router.get("/update/:ReviewID",checkAuthenticated, async (req, res) => {
-  try {
-    //const userID = req.session.passport.user.ID;
-    //const reviews = await Review.find({ userID: userID })
-    //res.json(reviews)
-    const review = await Review.findById(req.params.ReviewID)
-    res.render("updateReview", { review: review })
-  } catch (err) {
-    res.status(500).json({ message: err.message})
-  } 
+  const review = await Review.findById(req.params.ReviewID);
+  if (req.session.passport && req.session.passport.user && req.session.passport.user.ID) {
+    const userID = req.session.passport.user.ID;
+    if (userID != review.userID) {
+      res.redirect("/reviews")
+    } else {
+      try {
+        res.render("updateReview", { review: review })
+      } catch (err) {
+        res.status(500).json({ message: err.message})
+      } 
+    }
+  }
+  
 })
 
 router.patch("/update/:ReviewID", checkAuthenticated, async (req, res) => {
-  console.log("here");
   console.log("Requested review ID:", req.params.ReviewID);
-
   // Fetch the review from the database
   const review = await Review.findById(req.params.ReviewID);
   console.log("Found review:", review);
 
-  // Update the review properties
-  if (req.body.title != null) {
-    review.title = req.body.title;
-  }
-  if (req.body.address != null) {
-    review.address = req.body.address;
-  }
-  if (req.body.reviewBody != null) {
-    review.reviewBody = req.body.reviewBody;
-  }
-  if (req.body.stars != null) {
-    review.stars = req.body.stars;
-  }
-  if (req.body.coordinate != null) {
-    review.coordinate = req.body.coordinate;
-  }
-  if (req.body.anonymous != null) {
-    review.anonymous = req.body.anonymous;
+  if (req.session.passport && req.session.passport.user && req.session.passport.user.ID) {
+    const userID = req.session.passport.user.ID;
+    if (userID != review.userID) {
+      res.redirect("/reviews")
+    } else {
+      try {
+        // Update the review properties
+        if (req.body.title != null) {
+          review.title = req.body.title;
+        }
+        if (req.body.address != null) {
+          review.address = req.body.address;
+        }
+        if (req.body.reviewBody != null) {
+          review.reviewBody = req.body.reviewBody;
+        }
+        if (req.body.stars != null) {
+          review.stars = req.body.stars;
+        }
+        if (req.body.coordinate != null) {
+          review.coordinate = req.body.coordinate;
+        }
+        if (req.body.anonymous != null) {
+          review.anonymous = req.body.anonymous;
+        }
+
+        try {
+          const updatedReview = await review.save();
+          res.json(updatedReview);
+          console.log("Review Updated. Updated Review:", updatedReview);
+        } catch (err) {
+          res.status(400).json({ message: err.message });
+        }
+      } catch (err) {
+        res.status(500).json({ message: err.message})
+      } 
+    }
   }
 
-  try {
-    const updatedReview = await review.save();
-    res.json(updatedReview);
-    console.log("Review Updated. Updated Review:", updatedReview);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+  
 });
 
 
 router.delete("/update/:ReviewID", checkAuthenticated, getReview, async (req, res) => {
-  try {
-      await Review.findByIdAndDelete(req.params.ReviewID)
-      res.json({ message: "Deleted Review"})
-  } catch (err) {
-      //console.log("here")
-      res.status(500).json({ message: err.message})
-  }
+    if (req.session.passport && req.session.passport.user && req.session.passport.user.ID) {
+      const userID = req.session.passport.user.ID;
+      if (userID != res.review.userID) {
+        res.redirect("/reviews")
+      } else{
+        try {
+          await Review.findByIdAndDelete(req.params.ReviewID)
+          res.json({ message: "Deleted Review"})
+        } catch (err) {
+            //console.log("here")
+            res.status(500).json({ message: err.message})
+        }
+      }
+    }
+  
 })
 
 router.get("/:ReviewID", checkAuthenticated, async (req, res) => {

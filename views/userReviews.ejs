@@ -108,19 +108,25 @@
 		flex-grow: 1;
 		}
 
-		.review-item .review-button {
-		margin-right: 20px;
-		background-color: #4CAF50;
-		color: white;
-		border: none;
-		padding: 10px 20px;
-		text-align: center;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 16px;
-		border-radius: 4px;
-		cursor: pointer;
-		}
+		.review-item .review-buttons {
+        display: flex;
+        justify-content: space-between;
+        width: 75%;
+        margin-top: 10px;
+      }
+
+      .review-item .review-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
 
 		/*stars*/
 		.star-rating {
@@ -164,12 +170,6 @@
 	  <div class="review-list">
 		<% reviews.forEach(review => { %>
 		  <div class="review-item">
-			<div>
-				<a href="/reviews/<%= review._id %>" class="review-button">View</a>
-			</div>
-			<div>
-				<a href="/reviews/update/<%= review._id %>" class="review-button">Change</a>
-			</div>
 			<div class="review-content">
 			  <h2><%= review.title %></h2>
 			  <p><%= review.address %></p>
@@ -183,6 +183,10 @@
 				<% } %>
 				<span>(<%= review.stars %>)
 			  </div>
+			</div>
+			<div class="review-buttons">
+				<a href="/reviews/<%= review._id %>" class="review-button">View</a>
+				<a href="/reviews/update/<%= review._id %>" class="review-button">Change</a>
 			</div>
 		  </div>
 		<% }) %>
