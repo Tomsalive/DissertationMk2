@@ -108,9 +108,10 @@
         }
 
         .review-form-control.review-body {
-            height: 120px;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
+        height: 200px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
         }
 
         .star-rating-group {
@@ -183,7 +184,7 @@
             </div>
             <div class="review-form-group">
                 <label for="review-body" class="review-form-label">Review Body</label>
-                <span class="review-form-control review-body"><%= review.reviewBody %>
+                <textarea class="review-form-control review-body" id="review-body" rows="5"><%= review.reviewBody %></textarea>
             </div>
             <div>
                 <label>By: <%= username %> </label>
