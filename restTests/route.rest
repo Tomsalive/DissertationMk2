@@ -15,7 +15,8 @@ Content-Type: application/json
     "address": "24 Kings Avenue",
     "coordinate": "51.0527598,-1.3274846",
     "reviewBody": "property managments bad",
-    "stars": "2"
+    "stars": "2",
+    "anonymous": true,
 }
 
 ###
@@ -29,7 +30,8 @@ Content-Type: application/json
     "address": "71 Stanmore Lane, Winchester",
     "coordinate": "51.052541,-1.3324821",
     "reviewBody": "nice view",
-    "stars": "4"
+    "stars": "4",
+    "anonymous": false,
 }
 
 ###

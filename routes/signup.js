@@ -17,6 +17,13 @@ router.post("/", checkNotAuthenticated, async (req, res) => {
     }
 
     try {
+        // Check if the email already exists in the database
+        const existingUser = await User.findOne({ email: req.body.email.toLowerCase() });
+        if (existingUser) {
+            // If the email already exists, render the signup page with an error message
+            return res.render("signup", { locals: { email: req.body.email, emailError: 'This email is already registered.' } });
+        }
+
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const user = new User({
@@ -26,6 +33,7 @@ router.post("/", checkNotAuthenticated, async (req, res) => {
         });
         try {
             const newUser = await user.save();
+            alert("Sign up successful!");
             res.redirect('./login');
         } catch (err) {
             res.redirect('/signup');

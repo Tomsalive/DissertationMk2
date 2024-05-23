@@ -1,3 +1,7 @@
+
+This Docker portion of the project does not currently function, it was a planed deployment feature that ran out of time for full implementation. it exists incase last minuet the author can successfully configure the file
+
+
 ### Building and running your application
 
 When you're ready, start your application by running:
