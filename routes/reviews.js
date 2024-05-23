@@ -34,6 +34,7 @@ router.get('/new', checkAuthenticated, async (req, res) => {
           coordinate: req.body.coordinate,
           reviewBody: req.body.reviewBody,
           stars: req.body.stars,
+          anonymous: req.body.anonymous
         });
       
         try {
@@ -96,6 +97,9 @@ router.patch("/update/:ReviewID", checkAuthenticated, async (req, res) => {
   if (req.body.coordinate != null) {
     review.coordinate = req.body.coordinate;
   }
+  if (req.body.anonymous != null) {
+    review.anonymous = req.body.anonymous;
+  }
 
   try {
     const updatedReview = await review.save();
@@ -122,15 +126,20 @@ router.get("/:ReviewID", checkAuthenticated, async (req, res) => {
       console.log("Requested review ID:", req.params.ReviewID);
       const review = await Review.findById(req.params.ReviewID);
       console.log("Found review:", review);
-      console.log("attempting to retrive userID");
-      const user = await User.findById(review.userID);
-      console.log("userID:", user);
-
-      console.log("attempting to retrive username");
-      const username = user.username;
-      console.log("username:", username);
-      const email = user.email;
-      console.log("email:", email);
+      if (review.anonymous === true) {
+        username = "Anonymous";
+        email = "Anonymous";
+      } else {
+        console.log("attempting to retrive userID");
+        const user = await User.findById(review.userID);
+        console.log("userID:", user);
+        console.log("attempting to retrive username");
+        username = user.username;
+        console.log("username:", username);
+        email = user.email;
+        console.log("email:", email);
+      }
+      
       res.render("singleReview", { review: review, username, email});
     } catch (err) {
       console.error("Error fetching review:", err);

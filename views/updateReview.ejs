@@ -220,6 +220,12 @@
                       <label for="review-body" class="review-form-label">Review Body</label>
                       <textarea class="review-form-control" id="review-body" rows="3"><%= review.reviewBody %></textarea>
                     </div>
+                    <div class="review-form-group">
+                        <label>
+                            <input type="checkbox" id="anonymous-checkbox" onchange="toggleAnonymous()"> Anonymous
+                        </label>
+                        <input type="hidden" id="anonymous" name="anonymous" value="false">
+                    </div>
                     <button type="submit" class="review-form-update-btn">Update Review</button>
                     <button type="button" class="review-form-update-btn" onclick="deleteReview()">Delete Review</button>
                   </form>                  
@@ -342,7 +348,14 @@
             alert('An error occurred while updating the review. Please try again later.');
         }
         });
-      </script>
+    </script>
+    <script>
+        function toggleAnonymous() {
+            const anonymousCheckbox = document.getElementById('anonymous-checkbox');
+            const anonymousInput = document.getElementById('anonymous');
+            anonymousInput.value = anonymousCheckbox.checked ? 'true' : 'false';
+        }
+    </script>
       <script>
         async function deleteReview() {
         try {

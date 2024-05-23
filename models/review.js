@@ -30,6 +30,11 @@ const reviewSchema = new mongoose.Schema({
         required: true,
         default: Date.now
     },
+    anonymous: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
 })
 
 module.exports = mongoose.model('Review', reviewSchema)

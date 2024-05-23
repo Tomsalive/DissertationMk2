@@ -220,6 +220,12 @@
                       <label for="review-body" class="review-form-label">Review Body</label>
                       <textarea class="review-form-control" id="review-body" rows="3" placeholder="Enter your review"></textarea>
                     </div>
+                    <div class="review-form-group">
+                        <label>
+                            <input type="checkbox" id="anonymous-checkbox" onchange="toggleAnonymous()"> Anonymous
+                        </label>
+                        <input type="hidden" id="anonymous" name="anonymous" value="false">
+                    </div>
                     <button type="submit" class="review-form-submit-btn">Submit Review</button>
                   </form>                  
             </div>
@@ -292,6 +298,13 @@
 
     </script>
     <script>
+        function toggleAnonymous() {
+            const anonymousCheckbox = document.getElementById('anonymous-checkbox');
+            const anonymousInput = document.getElementById('anonymous');
+            anonymousInput.value = anonymousCheckbox.checked ? 'true' : 'false';
+        }
+    </script>    
+    <script>
         const reviewForm = document.getElementById('review-form');
 
         reviewForm.addEventListener('submit', async (event) => {
@@ -302,6 +315,7 @@
             const reviewBody = document.getElementById('review-body').value;
             const address = document.getElementById('search-input').value;
             const coordinate = document.getElementById('coordinate').value;
+            const anonymous = document.getElementById('anonymous').value;
 
             try {
                 const response = await fetch('/reviews/new', {
@@ -309,7 +323,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({title, address, coordinate, reviewBody, stars }),
+                body: JSON.stringify({title, address, coordinate, reviewBody, stars, anonymous }),
                 });
 
                 if (response.ok) {
