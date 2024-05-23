@@ -129,7 +129,9 @@ router.get("/:ReviewID", checkAuthenticated, async (req, res) => {
       console.log("attempting to retrive username");
       const username = user.username;
       console.log("username:", username);
-      res.render("singleReview", { review: review, username});
+      const email = user.email;
+      console.log("email:", email);
+      res.render("singleReview", { review: review, username, email});
     } catch (err) {
       console.error("Error fetching review:", err);
       res.status(500).json({ message: err.message });
