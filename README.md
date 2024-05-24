@@ -37,3 +37,6 @@ to run the developer mode:
 
 npm run devStart
 
+####
+
+to shut down the server ctrl + c in the terminal window.
