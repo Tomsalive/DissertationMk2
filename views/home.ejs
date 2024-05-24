@@ -240,11 +240,11 @@
 						const latitude = location.lat();
 						const longitude = location.lng();
 
-						clearMarkers();
+						///clearMarkers();
 
 						map.setCenter(location);
 						map.setZoom(18);
-						addMarker(location);
+						//addMarker(location);
 					} else {
 						alert("Geocode was not successful for the following reason: " + status);
 					}
