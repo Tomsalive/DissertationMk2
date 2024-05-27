@@ -138,37 +138,86 @@
 		color: #ffd700;
 		}
 
+		.review-stars {			
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+
+        .review-stars > input {
+            display: none;
+        }
+
+        .review-stars > label {
+            position: relative;
+            width: 1em;
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .review-stars > label::before {
+            content: "\2605";
+            position: absolute;
+            opacity: 0;
+        }
+
+        .review-stars > label:hover:before,
+        .review-stars > label:hover ~ label:before,
+        .review-stars > input:checked ~ label:before {
+            opacity: 1;
+            color: #fbbc04;
+        }
+
+		body {
+		padding-top: 80px; /* Adjust this value to match the height of the navigation bar */
+		}
+
 	</style>
   </head>
 
-  <body>
-    <header class="full-width-header">
-      <nav>
-        <div class="logo">
-          <a href="/home">WS Housing Reviewer</a>
-        </div>
-        <ul>
-            <li><button type="button" class="nav-btn" onclick="window.location.href='reviews/new'">New Review</button></li>
-			<li><button type="button" class="nav-btn" onclick="window.location.href='reviews/myreviews'">My Reviews</button></li>
-            <li>
-                <form action="/logout?_method=DELETE" method="POST">
-                  <button type="submit" class="nav-btn">Log Out</button>
-                </form>
-            </li>
-        </ul>
-      </nav>
-    </header>
+  <header class="full-width-header">
+	<nav>
+	  <div class="logo">
+		<a href="/home">WS Housing Reviewer</a>
+	  </div>
+	  <ul>
+		  <li><button type="button" class="nav-btn" onclick="window.location.href='reviews/new'">New Review</button></li>
+		  <li><button type="button" class="nav-btn" onclick="window.location.href='reviews/myreviews'">My Reviews</button></li>
+		  <li>
+			  <form action="/logout?_method=DELETE" method="POST">
+				<button type="submit" class="nav-btn">Log Out</button>
+			  </form>
+		  </li>
+	  </ul>
+	</nav>
+  </header>
 
-	<h1>Reviews</h1>
+  <body>
+
+	<div class="review-filter-group">
+		<div class="review-stars">
+		  <input type="radio" id="stars5" name="stars" value="5">
+		  <label for="stars5">&#9733</label>
+		  <input type="radio" id="stars4" name="stars" value="4">
+		  <label for="stars4">&#9733</label>
+		  <input type="radio" id="stars3" name="stars" value="3">
+		  <label for="stars3">&#9733</label>
+		  <input type="radio" id="stars2" name="stars" value="2">
+		  <label for="stars2">&#9733</label>
+		  <input type="radio" id="stars1" name="stars" value="1">
+		  <label for="stars1">&#9733</label>
+	</div>
+
 	<% if (reviews.length > 0) { %>
 	  <div class="review-list">
 		<% reviews.forEach(review => { %>
-		  <div class="review-item">
+			<div class="review-item review-stars-<%= review.stars %>">
 			<a href="/reviews/<%= review._id %>" class="review-button">View</a>
 			<div class="review-content">
 			  <h2><%= review.title %></h2>
 			  <p><%= review.address %></p>
-			  <div class="star-rating">
+			  <div class="star-rating" data-stars="<%= review.stars %>">
 				<% const numStars = parseInt(review.stars, 10); %>
 				<% for (let i = 0; i < numStars; i++) { %>
 				<span class="star active">&#9733;</span>
@@ -183,8 +232,40 @@
 		<% }) %>
 	  </div>
 	<% } else { %>
-	  <p>No reviews found.</p>
+		<p class="no-reviews-message" style="display: none;">No reviews found.</p>
 	<% } %>
     
   </body>
+  <script>
+	document.querySelectorAll('.review-stars input').forEach(input => {
+	input.addEventListener('change', filterReviews);
+	});
+
+	function filterReviews() {
+	const selectedStars = document.querySelector('.review-stars input:checked');
+	const selectedStarValue = selectedStars ? selectedStars.value : null;
+
+	const reviewItems = document.querySelectorAll('.review-item');
+	let hasReviewsForSelectedRating = false;
+
+	reviewItems.forEach(item => {
+		const reviewStarsClass = item.classList.value.match(/review-stars-(\d+)/);
+		const reviewStars = reviewStarsClass ? parseInt(reviewStarsClass[1]) : null;
+		if (selectedStarValue === null || reviewStars === parseInt(selectedStarValue)) {
+		hasReviewsForSelectedRating = true;
+		item.style.display = 'flex';
+		} else {
+		item.style.display = 'none';
+		}
+	});
+
+	const noReviewsMessage = document.querySelector('.no-reviews-message');
+	if (noReviewsMessage) {
+		noReviewsMessage.style.display = hasReviewsForSelectedRating ? 'none' : 'block';
+	}
+	}
+
+	window.addEventListener('DOMContentLoaded', filterReviews);
+
+  </script>
 </html>
