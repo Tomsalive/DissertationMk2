@@ -176,6 +176,7 @@
 				<h2><%= review.title %></h2>
 				<p><%= review.address %></p>
 				<input type="hidden" id="coordinate" name="coordinate" value=<%= review.coordinate %>>
+				<label type="hidden" id="reviewDate" name="reviewDate" value=<%= review.reviewDate %>>
 				<div class="star-rating">
 					<% const numStars = parseInt(review.stars, 10); %>
 					<% for (let i = 0; i < numStars; i++) { %>
@@ -215,6 +216,11 @@
 
 			placeReviewMarkers();
 
+			const reviewElements = document.querySelectorAll("#reviewDate");
+			const headerText = document.querySelector("h1");
+			headerText.textContent = "Recent Reviews";
+
+
 		}
 
 		function placeReviewMarkers() {
@@ -226,31 +232,63 @@
 		}
 
         function searchAddress() {
-			const searchInput = document.getElementById("search-input");
-			let address = searchInput.value.trim();
-			if (address === "") {
-				initMap()
-			} else{
-				const geocoder = new google.maps.Geocoder();
+		const searchInput = document.getElementById("search-input");
+		let address = searchInput.value.trim();
 
-				geocoder.geocode({ address: address }, (results, status) => {
-					if (status === "OK") {
-						const location = results[0].geometry.location;
-						console.log(location)
-						const latitude = location.lat();
-						const longitude = location.lng();
+		if (address === "") {
+			initMap();
+		} else {
+			const geocoder = new google.maps.Geocoder();
 
-						///clearMarkers();
+			geocoder.geocode({ address: address }, (results, status) => {
+			if (status === "OK") {
+				const location = results[0].geometry.location;
+				const latitude = location.lat();
+				const longitude = location.lng();
 
-						map.setCenter(location);
-						map.setZoom(18);
-						//addMarker(location);
-					} else {
-						alert("Geocode was not successful for the following reason: " + status);
-					}
-				}); 
+				// Get all the review elements
+				const reviewElements = document.querySelectorAll("#coordinate");
+
+				// Create an array to store the review locations
+				const reviewLocations = [];
+
+				// Loop through the review elements and calculate the distance from the searched address
+				reviewElements.forEach((element) => {
+				const coordinateString = element.value;
+				const [lat, lng] = coordinateString.split(",").map(parseFloat);
+				const distance = calculateDistance(
+					{ lat, lng },
+					{ lat: latitude, lng: longitude }
+				);
+				reviewLocations.push({ element, distance });
+				});
+
+				// Sort the review locations by distance
+				reviewLocations.sort((a, b) => a.distance - b.distance);
+
+				// Update the HTML to display the reviews in the sorted order
+				const reviewList = document.querySelector(".review-list");
+				reviewList.innerHTML = "";
+				reviewLocations.forEach((location) => {
+				reviewList.appendChild(location.element.closest(".review-item"));
+				});
+
+				map.setCenter(location);
+				map.setZoom(18);
+				const headerText = document.querySelector("h1");
+				headerText.textContent = "Nearby Reviews";
+			} else {
+				alert("Geocode was not successful for the following reason: " + status);
 			}
-    	}
+			});
+		}
+		}
+
+		function calculateDistance(coordinate1, coordinate2) {
+		const dx = coordinate1.lat - coordinate2.lat;
+		const dy = coordinate1.lng - coordinate2.lng;
+		return Math.sqrt(dx * dx + dy * dy);
+		}
 
         function handleKeydown(event) {
             if (event.key === 'Enter') {
@@ -284,8 +322,6 @@
 		});
 		}
     </script>
-
-
 
 </body>
 
